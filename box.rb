@@ -1,12 +1,7 @@
-a = IntegerPrimitive.new(5)
-# p a
+require_relative "arithmethic"
+require_relative "primitive"
+require_relative "translator"
 
-# Video Demonstrations
-
-m = Multiply.new(IntegerPrimitive.new(7), IntegerPrimitive.new(4))
-p m.evaluate
-a = Add.new(m, 3)
-p a.evaluate
-
-# arithmetic = Modulo.new(a, 12)
-# p arithmetic.evaluate
+sum = Add.new(IntegerPrimitive.new(5), IntegerPrimitive.new(4))
+text = sum.visit(Translator.new())
+p text

@@ -2,16 +2,14 @@ require_relative 'primitive'
 require_relative 'evaluator'
 
 class Add
+    attr_reader :left, :right
     def initialize(left, right)
         @left = left
         @right = right
     end
 
-    def evaluate
-        leftPrimitive = @left.evaluate
-        rightPrimitive = @right.evaluate
-
-        leftPrimitive.value + rightPrimitive.value
+    def visit(visitor)
+        visitor.visit_add(self)
     end
 end
 
@@ -20,26 +18,12 @@ class Subtraction
         @left = left
         @right = right
     end
-
-    def evaluate
-        leftPrimitive = @left.evaluate
-        rightPrimitive = @right.evaluate
-
-        leftPrimitive.value - rightPrimitive.value
-    end
 end
 
 class Multiply
     def initialize(left, right)
         @left = left
         @right = right
-    end
-
-    def evaluate
-        leftPrimitive = @left.evaluate
-        rightPrimitive = @right.evaluate
-
-        leftPrimitive.value * rightPrimitive.value
     end
 end
 
@@ -48,26 +32,12 @@ class Divide
         @left = left
         @right = right
     end
-
-    def evaluate
-        leftPrimitive = @left.evaluate
-        rightPrimitive = @right.evaluate
-
-        leftPrimitive.value / rightPrimitive.value
-    end
 end
 
 class Modulo
     def initialize(left, right)
         @left = left
         @right = right
-    end
-
-    def evaluate
-        leftPrimitive = @left.evaluate
-        rightPrimitive = @right.evaluate
-
-        leftPrimitive.value % rightPrimitive.value
     end
 end
 
@@ -76,23 +46,10 @@ class Exponent
         @left = left
         @right = right
     end
-
-    def evaluate
-        leftPrimitive = @left.evaluate
-        rightPrimitive = @right.evaluate
-
-        leftPrimitive.value ** rightPrimitive.value
-    end
 end
 
 class Negation
     def initialize(value)
         @value = value
-    end
-
-    def evaluate
-        valuePrimitive = @value.evaluate
-
-        !valuePrimitive
     end
 end
