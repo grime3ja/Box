@@ -43,6 +43,7 @@ class Translator
         "#{node.left.visit(self)} ^ #{node.right.visit(self)}"
     end
 
-    def visit_negate
+    def visit_negate(node)
+        "-#{node.value.visit(self).value}"
     end
 end
