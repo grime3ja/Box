@@ -1,4 +1,5 @@
 require_relative 'primitive'
+require_relative 'evaluator'
 
 class Add
     def initialize(left, right)
@@ -95,13 +96,3 @@ class Negation
         !valuePrimitive
     end
 end
-
-# Video Demonstrations
-
-m = Multiply.new(IntegerPrimitive.new(7), IntegerPrimitive.new(4))
-p m.evaluate
-a = Add.new(m, 3)
-p a.evaluate
-
-# arithmetic = Modulo.new(a, 12)
-# p arithmetic.evaluate

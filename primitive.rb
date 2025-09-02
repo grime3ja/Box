@@ -1,3 +1,4 @@
+require_relative 'translator'
 
 class IntegerPrimitive
     attr_reader :value
@@ -5,8 +6,8 @@ class IntegerPrimitive
         @value = value
     end
 
-    def evaluate
-        return self
+    def visit(visitor)
+        return visitor.visit_integer(self)
     end
 end
 
@@ -16,8 +17,8 @@ class FloatPrimitive
         @value = value
     end
 
-    def evaluate
-        return self
+    def visit(visitor)
+        return visitor.visit_float(self)
     end
 end
 
@@ -27,8 +28,8 @@ class BooleanPrimitive
         @value = value
     end
 
-    def evaluate
-        return self
+    def visit(visitor)
+        return visitor.visit_boolean(self)
     end
 end
 
@@ -38,8 +39,8 @@ class StringPrimitive
         @value = value
     end
 
-    def evaluate
-        return self
+    def visit(visitor)
+        return visitor.visit_string(self)
     end
 end
 
@@ -49,10 +50,7 @@ class NullPrimitive
         @value = nil
     end
 
-    def evaluate
-        return self
+    def visit(visitor)
+        return visitor.visit_null(self)
     end
 end
-
-a = IntegerPrimitive.new(5)
-# p a
