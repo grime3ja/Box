@@ -20,7 +20,7 @@ class Translator
     end
 
     def visit_add(node)
-        "#{node.left.visit(self)} + #{node.right.visit(self)}"
+        "(#{node.left.visit(self)} + #{node.right.visit(self)})"
     end
 
     def visit_subtract(node)
@@ -28,7 +28,7 @@ class Translator
     end
 
     def visit_multiply(node)
-        "#{node.left.visit(self)} * #{node.right.visit(self)}"
+        "(#{node.left.visit(self)} * #{node.right.visit(self)})"
     end
 
     def visit_divide(node)
