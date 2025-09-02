@@ -14,6 +14,7 @@ class Add
 end
 
 class Subtraction
+    attr_reader :left, :right
     def initialize(left, right)
         @left = left
         @right = right
@@ -25,6 +26,7 @@ class Subtraction
 end
 
 class Multiply
+    attr_reader :left, :right
     def initialize(left, right)
         @left = left
         @right = right
@@ -36,6 +38,7 @@ class Multiply
 end
 
 class Divide
+    attr_reader :left, :right
     def initialize(left, right)
         @left = left
         @right = right
@@ -47,6 +50,7 @@ class Divide
 end
 
 class Modulo
+    attr_reader :left, :right
     def initialize(left, right)
         @left = left
         @right = right
@@ -58,6 +62,7 @@ class Modulo
 end
 
 class Exponent
+    attr_reader :left, :right
     def initialize(left, right)
         @left = left
         @right = right
@@ -69,10 +74,10 @@ class Exponent
 end
 
 class Negation
+    attr_reader :value
     def initialize(value)
         @value = value
     end
-
     def visit(visitor)
         visitor.visit_negate(self)
     end
