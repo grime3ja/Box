@@ -23,27 +23,27 @@ class Translator
         "#{node.left.visit(self)} + #{node.right.visit(self)}"
     end
 
-    def visit_subtract(leftNode, rightNode)
+    def visit_subtract(node)
         "#{node.left.visit(self)} - #{node.right.visit(self)}"
     end
 
-    def visit_multiply
+    def visit_multiply(node)
         "#{node.left.visit(self)} * #{node.right.visit(self)}"
     end
 
-    def visit_divide
+    def visit_divide(node)
         "#{node.left.visit(self)} / #{node.right.visit(self)}"
     end
 
-    def visit_modulo
+    def visit_modulo(node)
         "#{node.left.visit(self)} % #{node.right.visit(self)}"
     end
 
-    def visit_exponent
+    def visit_exponent(node)
         "#{node.left.visit(self)} ^ #{node.right.visit(self)}"
     end
 
     def visit_negate(node)
-        "-#{node.value.visit(self).value}"
+        "-#{node.value.visit(self)}"
     end
 end
