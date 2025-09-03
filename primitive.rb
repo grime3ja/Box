@@ -38,6 +38,9 @@ class StringPrimitive
     def initialize(value)
         @value = value
     end
+    def visit(visitor)
+        visitor.visit_string(self)
+    end
 end
 
 class NullPrimitive

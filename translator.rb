@@ -60,7 +60,7 @@ class Translator
     end
 
     def visit_not(node)
-        "!#{node.value.visit(self)}"
+        "!(#{node.value.visit(self)})"
     end
 
     def visit_bit_and(node)
