@@ -5,6 +5,7 @@ require_relative "logical"
 require_relative "bitwise"
 require_relative "cast"
 require_relative "variable"
+require_relative "relational"
 
 # sum = Add.new(IntegerPrimitive.new(5), IntegerPrimitive.new(4))
 #text = sum.visit(Translator.new())
@@ -38,10 +39,11 @@ require_relative "variable"
 # bit_x = BitRight.new(IntegerPrimitive.new(9), IntegerPrimitive.new(2))
 # text = bit_x.visit(Evaluator.new())
 
+eq = Equals.new(IntegerPrimitive.new(4), IntegerPrimitive.new(3))
+text = eq.visit(Translator.new())
+p text
+text = eq.visit(Evaluator.new())
+p text
 # int_test = IntToFloat.new(BooleanPrimitive.new(5))
 # text = int_test.visit(Translator.new())
-var_x = VarPrimitive.new(x)
-ass_test = Assignment.new(var_x,BooleanPrimitive.new(true))
-r_test = VarReference.new(var_x)
-text = r_test.visit(Evaluator.new())
-p text
+# p text

@@ -88,11 +88,35 @@ class Translator
     end
     #this is C syntax dont know what ruby looks like
     def visit_float_to_int(node)
-        "(int)#{node.value.visit(self)}"
+        "#{node.value.visit(self)}.to_i"
     end
 
     def visit_int_to_float(node)
-        "(float)#{node.value.visit(self)}"
+        "#{node.value.visit(self)}.to_f"
+    end
+
+    def visit_equals(node)
+        "#{node.left.visit(self)} == #{node.right.visit(self)}"
+    end
+
+    def visit_not_equals(node)
+        "#{node.left.visit(self)} != #{node.right.visit(self)}"
+    end
+
+    def visit_less_than(node)
+        "#{node.left.visit(self)} < #{node.right.visit(self)}"
+    end
+
+    def visit_less_than_or_equal_to(node)
+        "#{node.left.visit(self)} <= #{node.right.visit(self)}"
+    end
+
+    def visit_greater_than(node)
+        "#{node.left.visit(self)} > #{node.right.visit(self)}"
+    end
+
+    def visit_greater_than_or_equal_to(node)
+        "#{node.left.visit(self)} >= #{node.right.visit(self)}"
     end
 
     def visit_assign(node)

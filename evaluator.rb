@@ -149,4 +149,45 @@ class Evaluator
         value = node.value.visit(self)
         value.value
     end
+    def visit_equals(node)
+        leftValue = node.left.visit(self)
+        rightValue = node.right.visit(self)
+
+        leftValue == rightValue
+    end
+
+    def visit_not_equals(node)
+        leftValue = node.left.visit(self)
+        rightValue = node.right.visit(self)
+
+        leftValue != rightValue
+    end
+
+    def visit_less_than(node)
+        leftValue = node.left.visit(self)
+        rightValue = node.right.visit(self)
+
+        leftValue < rightValue
+    end
+
+    def visit_less_than_or_equal_to(node)
+        leftValue = node.left.visit(self)
+        rightValue = node.right.visit(self)
+
+        leftValue <= rightValue
+    end
+
+    def visit_greater_than(node)
+        leftValue = node.left.visit(self)
+        rightValue = node.right.visit(self)
+
+        leftValue > rightValue
+    end
+
+    def visit_greater_than_or_equal_to(node)
+        leftValue = node.left.visit(self)
+        rightValue = node.right.visit(self)
+
+        leftValue >= rightValue
+    end
 end
