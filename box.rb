@@ -4,11 +4,12 @@ require_relative "translator"
 require_relative "logical"
 require_relative "bitwise"
 require_relative "cast"
+require_relative "variable"
 
 # sum = Add.new(IntegerPrimitive.new(5), IntegerPrimitive.new(4))
 #text = sum.visit(Translator.new())
-neg = Negation.new(IntegerPrimitive.new(5))
-text = neg.visit(Evaluator.new())
+# neg = Negation.new((Negation.new(IntegerPrimitive.new(5))))
+# text = neg.visit(Translator.new())
 # sub = Subtraction.new(IntegerPrimitive.new(7), IntegerPrimitive.new(2))
 #text = sub.visit(Translator.new())
 # mult = Multiply.new(IntegerPrimitive.new(7), IntegerPrimitive.new(2))
@@ -37,6 +38,10 @@ text = neg.visit(Evaluator.new())
 # bit_x = BitRight.new(IntegerPrimitive.new(9), IntegerPrimitive.new(2))
 # text = bit_x.visit(Evaluator.new())
 
-int_test = IntToFloat.new(BooleanPrimitive.new(5))
-text = int_test.visit(Translator.new())
+# int_test = IntToFloat.new(BooleanPrimitive.new(5))
+# text = int_test.visit(Translator.new())
+var_x = VarPrimitive.new(x)
+ass_test = Assignment.new(var_x,BooleanPrimitive.new(true))
+r_test = VarReference.new(var_x)
+text = r_test.visit(Evaluator.new())
 p text

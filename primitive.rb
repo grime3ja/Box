@@ -46,6 +46,15 @@ class NullPrimitive
         @value = nil
     end
 end
+class VarPrimitive
+    attr_reader :value
+    def initialize(value)
+        @value = value
+    end
 
-a = IntegerPrimitive.new(5)
+    def visit(visitor)
+        visitor.visit_var(self)
+    end
+end
+
 # p a

@@ -18,6 +18,9 @@ class Evaluator
     def visit_null(node)
         node.value
     end
+    def visit_var(node)
+        node.value
+    end
 
     def visit_add(node)
         leftPrimitive = node.left.visit(self)
@@ -135,5 +138,15 @@ class Evaluator
         value = node.value.visit(self)
 
         value.to_f
+    end
+
+    def visit_assign(node)
+        leftPrimitive = node.left.visit(self)
+        rightPrimitive = node.right.visit(self)
+        rightPrimitive
+    end
+    def visit_rvalue(node)
+        value = node.value.visit(self)
+        value.value
     end
 end

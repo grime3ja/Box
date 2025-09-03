@@ -19,6 +19,10 @@ class Translator
         node.value
     end
 
+    def visit_var(node)
+        node.value
+    end
+
     def visit_add(node)
         "(#{node.left.visit(self)} + #{node.right.visit(self)})"
     end
@@ -89,5 +93,13 @@ class Translator
 
     def visit_int_to_float(node)
         "(float)#{node.value.visit(self)}"
+    end
+
+    def visit_assign(node)
+        "#{node.left.visit(self)} = #{node.right.visit(self)}"
+    end
+    
+    def visit_rvalue(node)
+        "#{node.value.visit(self)}"
     end
 end
