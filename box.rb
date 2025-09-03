@@ -3,6 +3,7 @@ require_relative "primitive"
 require_relative "translator"
 require_relative "logical"
 require_relative "bitwise"
+require_relative "cast"
 
 # sum = Add.new(IntegerPrimitive.new(5), IntegerPrimitive.new(4))
 #text = sum.visit(Translator.new())
@@ -33,6 +34,9 @@ text = neg.visit(Evaluator.new())
 # text = or_test.visit(Evaluator.new())
 # not_test = Not.new(BooleanPrimitive.new(true))
 # text = not_test.visit(Evaluator.new())
-bit_x = BitRight.new(IntegerPrimitive.new(9), IntegerPrimitive.new(2))
-text = bit_x.visit(Evaluator.new())
+# bit_x = BitRight.new(IntegerPrimitive.new(9), IntegerPrimitive.new(2))
+# text = bit_x.visit(Evaluator.new())
+
+int_test = IntToFloat.new(BooleanPrimitive.new(5))
+text = int_test.visit(Evaluator.new())
 p text

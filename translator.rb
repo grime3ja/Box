@@ -82,4 +82,12 @@ class Translator
     def visit_bit_right(node)
         "#{node.left.visit(self)} >> #{node.right.visit(self)}"
     end
+
+    def visit_float_to_int(node)
+        "(int)#{node.value.visit(self)}"
+    end
+
+    def visit_int_to_float(node)
+        "(float)#{node.value.visit(self)}"
+    end
 end

@@ -125,4 +125,15 @@ class Evaluator
 
         leftValue >> rightValue
     end
+    def visit_float_to_int(node)
+        value = node.value.visit(self)
+
+        value.to_i
+    end
+
+    def visit_int_to_float(node)
+        value = node.value.visit(self)
+
+        value.to_f
+    end
 end
