@@ -82,7 +82,7 @@ class Translator
     def visit_bit_right(node)
         "#{node.left.visit(self)} >> #{node.right.visit(self)}"
     end
-
+    #this is C syntax dont know what ruby looks like
     def visit_float_to_int(node)
         "(int)#{node.value.visit(self)}"
     end
