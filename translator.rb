@@ -58,4 +58,28 @@ class Translator
     def visit_not(node)
         "!#{node.value.visit(self)}"
     end
+
+    def visit_bit_and(node)
+        "#{node.left.visit(self)} & #{node.right.visit(self)}"
+    end
+
+    def visit_bit_or(node)
+        "#{node.left.visit(self)} | #{node.right.visit(self)}"
+    end
+
+    def visit_bit_xor(node)
+        "#{node.left.visit(self)} ^ #{node.right.visit(self)}"
+    end
+
+    def visit_bit_not(node)
+        "~#{node.value.visit(self)}"
+    end
+
+    def visit_bit_left(node)
+        "#{node.left.visit(self)} << #{node.right.visit(self)}"
+    end
+
+    def visit_bit_right(node)
+        "#{node.left.visit(self)} >> #{node.right.visit(self)}"
+    end
 end

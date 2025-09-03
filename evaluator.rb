@@ -86,4 +86,43 @@ class Evaluator
 
         !value
     end
+    def visit_bit_and(node)
+        leftValue = node.left.visit(self)
+        rightValue = node.right.visit(self)
+
+        leftValue & rightValue
+    end
+
+    def visit_bit_or(node)
+        leftValue = node.left.visit(self)
+        rightValue = node.right.visit(self)
+
+        leftValue | rightValue
+    end
+
+    def visit_bit_xor(node)
+        leftValue = node.left.visit(self)
+        rightValue = node.right.visit(self)
+
+        leftValue ^ rightValue
+    end
+
+    def visit_bit_not(node)
+         value = node.value.visit(self)
+         ~value
+    end
+
+    def visit_bit_left(node)
+        leftValue = node.left.visit(self)
+        rightValue = node.right.visit(self)
+
+        leftValue << rightValue
+    end
+
+    def visit_bit_right(node)
+        leftValue = node.left.visit(self)
+        rightValue = node.right.visit(self)
+
+        leftValue >> rightValue
+    end
 end
