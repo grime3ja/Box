@@ -38,5 +38,5 @@ text = neg.visit(Evaluator.new())
 # text = bit_x.visit(Evaluator.new())
 
 int_test = IntToFloat.new(BooleanPrimitive.new(5))
-text = int_test.visit(Evaluator.new())
+text = int_test.visit(Translator.new())
 p text
