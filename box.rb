@@ -86,16 +86,37 @@ require_relative "relational"
 # puts text_trans
 # puts text_eval
 
+# Block Statements
+
+# Example 1 (Printing x variable)
+x = Assignment.new(VarPrimitive.new("x"), IntegerPrimitive.new(17))
+PrintOut.new(VarReference.new(x)).visit(Evaluator.new)
+
+# Example 2 (Assignment and reassignment of variables, printing data)
+count = Assignment.new(VarPrimitive.new("count"), BitLeft.new(IntegerPrimitive.new(6), IntegerPrimitive.new(1)))
+delta = Assignment.new(VarPrimitive.new("delta"), IntegerPrimitive.new(3))
+sum = Add.new(VarReference.new(count), VarReference.new(delta))
+count = Assignment.new(VarPrimitive.new("count"), sum)
+PrintOut.new(VarReference.new(count)).visit(Evaluator.new)
+
 #Typecheck checks
 #Shift
 bit_sh = BitLeft.new(FloatPrimitive.new(7.5), IntegerPrimitive.new(2))
 text_trans = bit_sh.visit(Translator.new())
 puts text_trans
+# text_eval = bit_sh.visit(Evaluator.new())
+# puts text_eval
+
 #Greater
 great = GreaterThanOrEqualTo.new(BooleanPrimitive.new(true),IntegerPrimitive.new(10))
 text_trans = great.visit(Translator.new())
 puts text_trans
+# text_eval = great.visit(Evaluator.new())
+# puts text_eval
+
 #Division
 div = Divide.new(StringPrimitive.new("fooo"),IntegerPrimitive.new(3))
 text_trans = div.visit(Translator.new())
 puts text_trans
+# text_eval = div.visit(Evaluator.new())
+# puts text_eval
