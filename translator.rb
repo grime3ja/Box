@@ -46,4 +46,16 @@ class Translator
     def visit_negate(node)
         "-#{node.value.visit(self)}"
     end
+
+    def visit_and(node)
+        "#{node.left.visit(self)} && #{node.right.visit(self)}"
+    end
+    
+    def visit_or(node)
+        "#{node.left.visit(self)} || #{node.right.visit(self)}"
+    end
+
+    def visit_not(node)
+        "!#{node.value.visit(self)}"
+    end
 end

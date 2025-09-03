@@ -1,11 +1,12 @@
 require_relative "arithmethic"
 require_relative "primitive"
 require_relative "translator"
+require_relative "logical"
 
 # sum = Add.new(IntegerPrimitive.new(5), IntegerPrimitive.new(4))
 #text = sum.visit(Translator.new())
-# neg = Negation.new(IntegerPrimitive.new(5))
-#text = neg.visit(Translator.new())
+neg = Negation.new(IntegerPrimitive.new(5))
+text = neg.visit(Evaluator.new())
 # sub = Subtraction.new(IntegerPrimitive.new(7), IntegerPrimitive.new(2))
 #text = sub.visit(Translator.new())
 # mult = Multiply.new(IntegerPrimitive.new(7), IntegerPrimitive.new(2))
@@ -20,7 +21,15 @@ require_relative "translator"
 # text = arth.visit(Translator.new())
 # p text
 
-arth = Add.new(Add.new(Add.new(IntegerPrimitive.new(5), IntegerPrimitive.new(3)), IntegerPrimitive.new(2)), IntegerPrimitive.new(1))
-text = arth.visit(Translator.new) + " =  #{arth.visit(Evaluator.new)}"
+# arth = Add.new(Add.new(Add.new(IntegerPrimitive.new(5), IntegerPrimitive.new(3)), IntegerPrimitive.new(2)), IntegerPrimitive.new(1))
+# text = arth.visit(Translator.new) + " =  #{arth.visit(Evaluator.new)}"
 
+# p text
+
+# and_test = And.new(BooleanPrimitive.new(true), BooleanPrimitive.new(false))
+# text = and_test.visit(Evaluator.new())
+# or_test = Or.new(BooleanPrimitive.new(true), BooleanPrimitive.new(false))
+# text = or_test.visit(Evaluator.new())
+# not_test = Not.new(BooleanPrimitive.new(true))
+# text = not_test.visit(Evaluator.new())
 p text

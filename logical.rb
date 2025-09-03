@@ -1,39 +1,31 @@
 class And
+    attr_reader :left, :right
     def initialize(left, right)
         @left = left
         @right = right
+    def visit(visitor)
+        visitor.visit_and(self)
     end
-
-    def evaluate
-        leftPrimitive = @left.evaluate
-        rightPrimitive = @right.evaluate
-
-        leftPrimitive && rightPrimitive
     end
 end
 
 class Or
+    attr_reader :left, :right
     def initialize(left, right)
         @left = left
         @right = right
     end
-
-    def evaluate
-        leftPrimitive = @left.evaluate
-        rightPrimitive = @right.evaluate
-
-        leftPrimitive || rightPrimitive
+    def visit(visitor)
+        visitor.visit_or(self)
     end
 end
 
 class Not
+    attr_reader :value
     def initialize(value)
         @value = value
     end
-
-    def evaluate
-        valuePrimitive = @value.evaluate
-
-        !valuePrimitive
+    def visit(visitor)
+        visitor.visit_not(self)
     end
 end

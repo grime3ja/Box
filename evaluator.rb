@@ -61,10 +61,29 @@ class Evaluator
         leftPrimitive ** rightPrimitive
     end
 
-    # still need to do this part
+    
     def visit_negate(node)
-        value = node.value
+        value = node.value.visit(self)
+         -value
+    end
 
-        -value
+    def visit_and(node)
+        leftValue = node.left.visit(self)
+        rightValue = node.right.visit(self)
+
+        leftValue && rightValue
+    end
+
+    def visit_or(node)
+        leftValue = node.left.visit(self)
+        rightValue = node.right.visit(self)
+
+        leftValue || rightValue
+    end
+
+    def visit_not(node)
+        value = node.value.visit(self)
+
+        !value
     end
 end
