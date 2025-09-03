@@ -39,11 +39,25 @@ require_relative "relational"
 # bit_x = BitRight.new(IntegerPrimitive.new(9), IntegerPrimitive.new(2))
 # text = bit_x.visit(Evaluator.new())
 
-eq = Equals.new(IntegerPrimitive.new(4), IntegerPrimitive.new(3))
-text = eq.visit(Translator.new())
-p text
-text = eq.visit(Evaluator.new())
-p text
+# eq = Equals.new(IntegerPrimitive.new(4), IntegerPrimitive.new(3))
+# text = eq.visit(Translator.new())
+# p text
+# text = eq.visit(Evaluator.new())
+# p text
 # int_test = IntToFloat.new(BooleanPrimitive.new(5))
 # text = int_test.visit(Translator.new())
 # p text
+
+var_x = VarPrimitive.new("x")
+assign_test = Assignment.new(var_x, IntegerPrimitive.new(5))
+r_test = VarReference.new(assign_test)
+# text = r_test.visit(Translator.new())
+
+var_y = VarPrimitive.new('y')
+assign_y = Assignment.new(var_y, IntegerPrimitive.new(3))
+y_test = VarReference.new(assign_y)
+sum = Multiply.new(r_test, y_test)
+
+text = sum.visit(Evaluator.new)
+
+p text

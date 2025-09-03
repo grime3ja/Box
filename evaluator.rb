@@ -67,7 +67,7 @@ class Evaluator
     
     def visit_negate(node)
         value = node.value.visit(self)
-         -value
+        -value
     end
 
     def visit_and(node)
@@ -145,10 +145,12 @@ class Evaluator
         rightPrimitive = node.right.visit(self)
         rightPrimitive
     end
+
     def visit_rvalue(node)
         value = node.value.visit(self)
-        value.value
+        value
     end
+
     def visit_equals(node)
         leftValue = node.left.visit(self)
         rightValue = node.right.visit(self)
