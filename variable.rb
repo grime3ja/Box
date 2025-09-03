@@ -10,10 +10,9 @@ class Assignment
     end
 end
 class PrintOut
-    attr_reader :left, :right
-    def initialize(left, right)
-        @left = left
-        @right = right
+    attr_reader :value
+    def initialize(value)
+        @value = value
     end
 
     def visit(visitor)

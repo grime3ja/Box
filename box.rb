@@ -48,16 +48,37 @@ require_relative "relational"
 # text = int_test.visit(Translator.new())
 # p text
 
-var_x = VarPrimitive.new("x")
-assign_test = Assignment.new(var_x, IntegerPrimitive.new(5))
-r_test = VarReference.new(assign_test)
-# text = r_test.visit(Translator.new())
+# var_x = VarPrimitive.new("x")
+# assign_test = Assignment.new(var_x, IntegerPrimitive.new(5))
+# r_test = VarReference.new(assign_test)
+# # text = r_test.visit(Translator.new())
 
-var_y = VarPrimitive.new('y')
-assign_y = Assignment.new(var_y, IntegerPrimitive.new(3))
-y_test = VarReference.new(assign_y)
-sum = Multiply.new(r_test, y_test)
+# var_y = VarPrimitive.new('y')
+# assign_y = Assignment.new(var_y, IntegerPrimitive.new(3))
+# y_test = VarReference.new(assign_y)
+# sum = Multiply.new(r_test, y_test)
+# print_t = PrintOut.new(sum)
+# print_t.visit(Evaluator.new())
 
-text = sum.visit(Evaluator.new)
+#R-value lookup and shift
+# var_z = VarPrimitive.new('z')
+# assign_z = Assignment.new(var_z, IntegerPrimitive.new(2))
+# rvalue_shift = BitLeft.new(VarReference.new(assign_z),IntegerPrimitive.new(3))
+# text_trans = rvalue_shift.visit(Translator.new())
+# text_eval = rvalue_shift.visit(Evaluator.new())
+# puts text_trans
+# puts text_eval
 
-p text
+#R-value lookup and comparison
+var_j = VarPrimitive.new('j')
+assign_j = Assignment.new(var_j, IntegerPrimitive.new(2))
+j_rvalue = VarReference.new(assign_j)
+add_j = Add.new(j_rvalue, IntegerPrimitive.new(0))
+rvalue_comp = Equals.new(j_rvalue,add_j)
+
+text_trans = rvalue_comp.visit(Translator.new())
+text_eval = rvalue_comp.visit(Evaluator.new())
+
+puts text_trans
+puts text_eval
+

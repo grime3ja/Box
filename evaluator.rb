@@ -150,6 +150,10 @@ class Evaluator
         value = node.value.visit(self)
         value
     end
+    
+    def visit_print(node)
+        puts node.value.visit(self)
+    end
 
     def visit_equals(node)
         leftValue = node.left.visit(self)

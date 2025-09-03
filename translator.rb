@@ -126,4 +126,8 @@ class Translator
     def visit_rvalue(node)
         "#{node.value.visit(self).split[0]}"
     end
+
+    def visit_print(node)
+        "print #{node.value.visit(self)}"
+    end
 end
