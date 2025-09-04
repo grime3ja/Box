@@ -9,6 +9,7 @@ require_relative "relational"
 
 ### Video Examples ###
 
+# (7 * 4 + 3) % 12
 arithmetic = Modulo.new(
                Add.new(
                  Multiply.new(IntegerPrimitive.new(7), IntegerPrimitive.new(4)),
@@ -19,6 +20,7 @@ arithmetic = Modulo.new(
 text = "#{arithmetic.visit(Translator.new)} = #{arithmetic.visit(Evaluator.new)}"
 p text
 
+# a * b
 a = Assignment.new(
         VarPrimitive.new('a'), IntegerPrimitive.new(-4)
     )
@@ -30,6 +32,7 @@ text = "#{arithmetic_negation_and_rvals.visit(Translator.new)} = #{arithmetic_ne
 p text
 
 #R-value lookup and shift
+# i << 3
 var_z = VarPrimitive.new('z')
 assign_z = Assignment.new(var_z, IntegerPrimitive.new(2))
 rvalue_shift = BitLeft.new(VarReference.new(assign_z),IntegerPrimitive.new(3))
@@ -39,6 +42,7 @@ puts text_trans
 puts text_eval
 
 #R-value lookup and comparison
+# j == j + 0
 var_j = VarPrimitive.new('j')
 assign_j = Assignment.new(var_j, IntegerPrimitive.new(2))
 j_rvalue = VarReference.new(assign_j)
@@ -52,6 +56,7 @@ puts text_trans
 puts text_eval
 
 #Logic and comparison
+# !(3.3 > 3.2)
 logic = GreaterThan.new(FloatPrimitive.new(3.3), FloatPrimitive.new(3.2))
 not_op = Not.new(logic)
 text_trans = not_op.visit(Translator.new())
@@ -60,6 +65,7 @@ puts text_trans
 puts text_eval
 
 #Double negation
+# --(6 * 8)
 mult = Multiply.new(IntegerPrimitive.new(6), IntegerPrimitive.new(8))
 neg = Negation.new(Negation.new(mult))
 text_trans = neg.visit(Translator.new())
@@ -68,6 +74,7 @@ puts text_trans
 puts text_eval
 
 #Bitwise op (Two's Complement)
+# ~5 | ~8
 or_t = BitOr.new(
            BitNot.new(IntegerPrimitive.new(5)), BitNot.new(IntegerPrimitive.new(8))
        )
@@ -77,6 +84,7 @@ puts text_trans
 puts text_eval
 
 #Casting
+# float(7) / 2
 div = Divide.new(IntToFloat.new(IntegerPrimitive.new(7)), IntegerPrimitive.new(2))
 text_trans = div.visit(Translator.new())
 text_eval = div.visit(Evaluator.new())
@@ -84,6 +92,7 @@ puts text_trans
 puts text_eval
 
 #Assignment 
+# n = 9 & 3
 var_n = VarPrimitive.new('n')
 assign_n = Assignment.new(
                var_n, BitAnd.new(IntegerPrimitive.new(9), IntegerPrimitive.new(3))
@@ -138,6 +147,7 @@ PrintOut.new(
 #Typecheck checks
 
 #Shift
+# 7.5 << 2
 bit_sh = BitLeft.new(FloatPrimitive.new(7.5), IntegerPrimitive.new(2))
 text_trans = bit_sh.visit(Translator.new())
 puts text_trans
@@ -145,6 +155,7 @@ puts text_trans
 # puts text_eval
 
 #Greater
+# true >= 10
 great = GreaterThanOrEqualTo.new(BooleanPrimitive.new(true),IntegerPrimitive.new(10))
 text_trans = great.visit(Translator.new())
 puts text_trans
@@ -152,6 +163,7 @@ puts text_trans
 # puts text_eval
 
 #Division
+# "fooo" / 3
 div = Divide.new(StringPrimitive.new("fooo"),IntegerPrimitive.new(3))
 text_trans = div.visit(Translator.new())
 puts text_trans
