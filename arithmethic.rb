@@ -1,6 +1,3 @@
-require_relative 'primitive'
-require_relative 'evaluator'
-
 class Add
     attr_reader :left, :right
     def initialize(left, right)
