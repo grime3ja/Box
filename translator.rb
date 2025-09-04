@@ -44,7 +44,7 @@ class Translator
     end
 
     def visit_exponent(node)
-        "#{node.left.visit(self)} ^ #{node.right.visit(self)}"
+        "#{node.left.visit(self)} ** #{node.right.visit(self)}"
     end
 
     def visit_negate(node)
