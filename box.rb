@@ -1,6 +1,7 @@
 require_relative "arithmethic"
 require_relative "primitive"
 require_relative "translator"
+require_relative "evaluator"
 require_relative "logical"
 require_relative "bitwise"
 require_relative "cast"
@@ -115,11 +116,17 @@ PrintOut.new(VarReference.new(x)).visit(Evaluator.new)
 count = Assignment.new(
             VarPrimitive.new("count"), BitLeft.new(IntegerPrimitive.new(6), IntegerPrimitive.new(1))
         )
+p count.visit(Translator.new)
+
 delta = Assignment.new(
             VarPrimitive.new("delta"), IntegerPrimitive.new(3)
         )
+p delta.visit(Translator.new)
 sum = Add.new(VarReference.new(count), VarReference.new(delta))
 count = Assignment.new(VarPrimitive.new("count"), sum)
+p count.visit(Translator.new)
+printOut = PrintOut.new(VarReference.new(count)).visit(Translator.new)
+p printOut
 PrintOut.new(VarReference.new(count)).visit(Evaluator.new)
 
 # Example 3 (Complex print statements)
