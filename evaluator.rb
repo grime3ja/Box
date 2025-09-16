@@ -1,4 +1,22 @@
 class Evaluator
+    class Runtime
+        def initialize
+            @vars = {}
+        end
+
+        def get(name)
+            @vars[name]
+        end
+
+        def set(name,value)
+            @vars[name] = value
+        end
+        
+        def to_s
+            @vars.to_s
+        end
+    end
+
     def initialize(runtime)
         @runtime = runtime
     end
@@ -22,8 +40,9 @@ class Evaluator
     def visit_null(node)
         node
     end
+
     def visit_var(node)
-        node
+    node
     end
 
     def visit_add(node)
@@ -234,16 +253,41 @@ class Evaluator
         leftPrimitive = node.left.visit(self)
         rightPrimitive = node.right.visit(self)
         raise "Expected #{leftPrimitive} to be type Variable Primitive" unless (leftPrimitive.is_a? VarPrimitive)
-        leftPrimitive.assign_value(rightPrimitive)
+        case rightPrimitive.class
+        when IntegerPrimitive
+            @runtime.set(VarPrimitive.new(leftPrimitive),IntegerPrimitive.new(rightPrimitive))
+        when FloatPrimitive
+            @runtime.set(VarPrimitive.new(leftPrimitive),FloatPrimitive.new(rightPrimitive))
+        when StringPrimitive
+            @runtime.set(VarPrimitive.new(leftPrimitive),StringPrimitive.new(rightPrimitive))
+        when BooleanPrimitive
+            @runtime.set(VarPrimitive.new(leftPrimitive),BooleanPrimitive.new(rightPrimitive))
+        when NullPrimitivePrimitive
+            @runtime.set(VarPrimitive.new(leftPrimitive),NullPrimitive.new(rightPrimitive))    
+        when VarPrimitive
+            @runtime.set(VarPrimitive.new(leftPrimitive),VarPrimitive.new(rightPrimitive))
+        end    
     end
 
     def visit_rvalue(node)
         value = node.value.visit(self)
-        value
+        case @runtime.get(value).class
+        when FloatPrimitive
+            FloatPrimitive.new(@runtime.get(value))
+        when StringPrimitive
+            StringPrimitivePrimitive.new(@runtime.get(value))
+        when BooleanPrimitive
+            BooleanPrimitive.new(@runtime.get(value))
+        when IntegerPrimitive
+            IntegerPrimitive.new(@runtime.get(value))
+        when NullPrimitive
+            NullPrimitive.new(@runtime.get(value))
+        end
     end
     
     def visit_print(node)
         puts node.value.visit(self)
+        NullPrimitive.new
     end
 
     def visit_equals(node)
@@ -313,20 +357,3 @@ class Evaluator
     end
 end
 
-class Runtime
-    def initialize
-        @vars = {}
-    end
-
-    def get(name)
-        @vars[name]
-    end
-
-    def set(name,value)
-        @vars[name] = value
-    end
-    
-    def to_s
-        @vars.to_s
-    end
-end
