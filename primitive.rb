@@ -54,9 +54,9 @@ class VarPrimitive
     def initialize(value)
         @value = value
     end
-    def assign_value(new_value)
-        @value = new_value
-    end
+    # def assign_value(new_value)
+    #     @value = new_value
+    # end
     def visit(visitor)
         visitor.visit_var(self)
     end

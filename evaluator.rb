@@ -1,22 +1,5 @@
 class Evaluator
-    class Runtime
-        def initialize
-            @vars = {}
-        end
-
-        def get(name)
-            @vars[name]
-        end
-
-        def set(name,value)
-            @vars[name] = value
-        end
-        
-        def to_s
-            @vars.to_s
-        end
-    end
-
+    # attr_reader :runtime
     def initialize(runtime)
         @runtime = runtime
     end
@@ -42,15 +25,15 @@ class Evaluator
     end
 
     def visit_var(node)
-    node
+        node
     end
 
     def visit_add(node)
         leftPrimitive = node.left.visit(self)
-        raise "Expected #{leftPrimitive} to be type IntegerPrimitive or FloatPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive)
+        raise "Expected #{leftPrimitive} to be type IntegerPrimitive, FloatPrimitive, or VarPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive) || (leftPrimitive.is_a? VarPrimitive)
         
         rightPrimitive = node.right.visit(self)
-        raise "Expected #{rightPrimitive} to be type IntegerPrimitive or FloatPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive)
+        raise "Expected #{rightPrimitive} to be type IntegerPrimitive, FloatPrimitive, or VarPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? VarPrimitive)
 
         sum = leftPrimitive.value + rightPrimitive.value
         if ((leftPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? FloatPrimitive))
@@ -62,11 +45,10 @@ class Evaluator
 
     def visit_subtract(node)
         leftPrimitive = node.left.visit(self)
-        raise "Expected #{leftPrimitive} to be type IntegerPrimitive or FloatPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive)
+        raise "Expected #{leftPrimitive} to be type IntegerPrimitive, FloatPrimitive, or VarPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive) || (leftPrimitive.is_a? VarPrimitive)
         
         rightPrimitive = node.right.visit(self)
-        raise "Expected #{rightPrimitive} to be type IntegerPrimitive or FloatPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive)
-
+        raise "Expected #{rightPrimitive} to be type IntegerPrimitive, FloatPrimitive, or VarPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? VarPrimitive)
 
         sub = leftPrimitive.value - rightPrimitive.value
         if ((leftPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? FloatPrimitive))
@@ -77,24 +59,31 @@ class Evaluator
 
     def visit_multiply(node)
         leftPrimitive = node.left.visit(self)
-        raise "Expected #{leftPrimitive} to be type IntegerPrimitive or FloatPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive)
+        raise "Expected #{leftPrimitive} to be type IntegerPrimitive, FloatPrimitive, or VarPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive) || (leftPrimitive.is_a? VarPrimitive)
         
         rightPrimitive = node.right.visit(self)
-        raise "Expected #{rightPrimitive} to be type IntegerPrimitive or FloatPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive)
+        raise "Expected #{rightPrimitive} to be type IntegerPrimitive, FloatPrimitive, or VarPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? VarPrimitive)
 
-        product = leftPrimitive.value * rightPrimitive.value
+        begin
+            product = leftPrimitive.value * rightPrimitive.value
+        rescue
+            product = leftPrimitive.value.value * rightPrimitive.value.value
+        end
         if ((leftPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? FloatPrimitive))
             FloatPrimitive.new(product)
+        elsif ((leftPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? IntegerPrimitive))
+            IntegerPrimitive.new(product)
+        else
+
         end
-        IntegerPrimitive.new(product)
     end
 
     def visit_divide(node)
         leftPrimitive = node.left.visit(self)
-        raise "Expected #{leftPrimitive} to be type IntegerPrimitive or FloatPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive)
+        raise "Expected #{leftPrimitive} to be type IntegerPrimitive, FloatPrimitive, or VarPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive) || (leftPrimitive.is_a? VarPrimitive)
         
         rightPrimitive = node.right.visit(self)
-        raise "Expected #{rightPrimitive} to be type IntegerPrimitive or FloatPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive)
+        raise "Expected #{rightPrimitive} to be type IntegerPrimitive, FloatPrimitive, or VarPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? VarPrimitive)
 
         quotient = leftPrimitive.value / rightPrimitive.value
         if ((leftPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? FloatPrimitive))
@@ -105,10 +94,10 @@ class Evaluator
 
     def visit_modulo(node)
         leftPrimitive = node.left.visit(self)
-        raise "Expected #{leftPrimitive} to be type IntegerPrimitive or FloatPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive)
+        raise "Expected #{leftPrimitive} to be type IntegerPrimitive, FloatPrimitive, or VarPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive) || (leftPrimitive.is_a? VarPrimitive)
         
         rightPrimitive = node.right.visit(self)
-        raise "Expected #{rightPrimitive} to be type IntegerPrimitive or FloatPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive)
+        raise "Expected #{rightPrimitive} to be type IntegerPrimitive, FloatPrimitive, or VarPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? VarPrimitive)
 
         mod = leftPrimitive.value % rightPrimitive.value
         if ((leftPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? FloatPrimitive))
@@ -120,10 +109,10 @@ class Evaluator
 
     def visit_exponent(node)
         leftPrimitive = node.left.visit(self)
-        raise "Expected #{leftPrimitive} to be type IntegerPrimitive or FloatPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive)
+        raise "Expected #{leftPrimitive} to be type IntegerPrimitive, FloatPrimitive, or VarPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive) || (leftPrimitive.is_a? VarPrimitive)
         
         rightPrimitive = node.right.visit(self)
-        raise "Expected #{rightPrimitive} to be type IntegerPrimitive or FloatPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive)
+        raise "Expected #{rightPrimitive} to be type IntegerPrimitive, FloatPrimitive, or VarPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? VarPrimitive)
 
         exp = leftPrimitive.value ** rightPrimitive.value
         if ((leftPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? FloatPrimitive))
@@ -135,8 +124,8 @@ class Evaluator
     
     def visit_negate(node)
         val = node.left.visit(self)
-        raise "Expected #{val} to be type IntegerPrimitive or FloatPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive)
-        
+        raise "Expected #{val} to be type IntegerPrimitive, FloatPrimitive, or VarPrimitive" unless (val.is_a? IntegerPrimitive) || (val.is_a? FloatPrimitive) || (val.is_a? VarPrimitive)
+
         negate = -val.value
         if ((leftPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? FloatPrimitive))
             FloatPrimitive.new(negate)
@@ -253,35 +242,28 @@ class Evaluator
         leftPrimitive = node.left.visit(self)
         rightPrimitive = node.right.visit(self)
         raise "Expected #{leftPrimitive} to be type Variable Primitive" unless (leftPrimitive.is_a? VarPrimitive)
-        case rightPrimitive.class
-        when IntegerPrimitive
-            @runtime.set(VarPrimitive.new(leftPrimitive),IntegerPrimitive.new(rightPrimitive))
-        when FloatPrimitive
-            @runtime.set(VarPrimitive.new(leftPrimitive),FloatPrimitive.new(rightPrimitive))
-        when StringPrimitive
-            @runtime.set(VarPrimitive.new(leftPrimitive),StringPrimitive.new(rightPrimitive))
-        when BooleanPrimitive
-            @runtime.set(VarPrimitive.new(leftPrimitive),BooleanPrimitive.new(rightPrimitive))
-        when NullPrimitivePrimitive
-            @runtime.set(VarPrimitive.new(leftPrimitive),NullPrimitive.new(rightPrimitive))    
-        when VarPrimitive
-            @runtime.set(VarPrimitive.new(leftPrimitive),VarPrimitive.new(rightPrimitive))
-        end    
+        @runtime.set(leftPrimitive, rightPrimitive)
     end
 
     def visit_rvalue(node)
-        value = node.value.visit(self)
-        case @runtime.get(value).class
+        if node.value.class.eql?(Assignment)
+          node.value.visit(self)
+        end
+        variable = node.value.left
+        value = @runtime.get(variable)
+        case value
         when FloatPrimitive
-            FloatPrimitive.new(@runtime.get(value))
+            FloatPrimitive.new(value)
         when StringPrimitive
-            StringPrimitivePrimitive.new(@runtime.get(value))
+            StringPrimitivePrimitive.new(value)
         when BooleanPrimitive
-            BooleanPrimitive.new(@runtime.get(value))
+            BooleanPrimitive.new(value)
         when IntegerPrimitive
-            IntegerPrimitive.new(@runtime.get(value))
+            IntegerPrimitive.new(value)
         when NullPrimitive
-            NullPrimitive.new(@runtime.get(value))
+            NullPrimitive.new(value)
+        else
+            raise "Variable reference to #{variable.inspect} yielded no results"
         end
     end
     
@@ -357,3 +339,21 @@ class Evaluator
     end
 end
 
+
+class Runtime
+    def initialize
+        @vars = {}
+    end
+
+    def get(name)
+        @vars[name]
+    end
+
+    def set(name,value)
+        @vars[name] = value
+    end
+    
+    def to_s
+        @vars.to_s
+    end
+end

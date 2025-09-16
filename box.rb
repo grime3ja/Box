@@ -11,6 +11,7 @@ require_relative "relational"
 ### Video Examples ###
 
 # (7 * 4 + 3) % 12
+runtime = Runtime.new
 arithmetic = Modulo.new(
                Add.new(
                  Multiply.new(IntegerPrimitive.new(7), IntegerPrimitive.new(4)),
@@ -18,29 +19,28 @@ arithmetic = Modulo.new(
                ), IntegerPrimitive.new(12)
              )
 
-text = "#{arithmetic.visit(Translator.new)} = #{arithmetic.visit(Evaluator.new)}"
-p text
+p arithmetic.visit(Translator.new)
+p arithmetic.visit(Evaluator.new(runtime))
 
 # a * b
-a = Assignment.new(
-        VarPrimitive.new('a'), IntegerPrimitive.new(-4)
-    )
-b = Assignment.new(
-        VarPrimitive.new('b'), IntegerPrimitive.new(-3)
-    )
-arithmetic_negation_and_rvals = Multiply.new(VarReference.new(a), VarReference.new(b))
-text = "#{arithmetic_negation_and_rvals.visit(Translator.new)} = #{arithmetic_negation_and_rvals.visit(Evaluator.new)}"
-p text
+runtime = Runtime.new
+var_ref_a = VarReference.new(Assignment.new(VarPrimitive.new("a"), IntegerPrimitive.new(-4)))
+var_ref_b = VarReference.new(Assignment.new(VarPrimitive.new("b"), IntegerPrimitive.new(-3)))
+arithmetic_negation_and_rvals = Multiply.new(var_ref_a, var_ref_b)
+
+p arithmetic_negation_and_rvals.visit(Translator.new)
+p arithmetic_negation_and_rvals.visit(Evaluator.new(runtime))
 
 #R-value lookup and shift
 # i << 3
-var_z = VarPrimitive.new('z')
-assign_z = Assignment.new(var_z, IntegerPrimitive.new(2))
-rvalue_shift = BitLeft.new(VarReference.new(assign_z),IntegerPrimitive.new(3))
+runtime = Runtime.new
+var_z = VarPrimitive.new('z', IntegerPrimitive.new(2))
+# assign_z = Assignment.new(var_z, IntegerPrimitive.new(2))
+rvalue_shift = BitLeft.new(VarReference.new(var_z),IntegerPrimitive.new(3))
 text_trans = rvalue_shift.visit(Translator.new())
-text_eval = rvalue_shift.visit(Evaluator.new())
+# text_eval = rvalue_shift.visit(Evaluator.new(runtime))
 puts text_trans
-puts text_eval
+# puts text_eval
 
 #R-value lookup and comparison
 # j == j + 0
