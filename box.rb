@@ -176,3 +176,7 @@ text_trans = div.visit(Translator.new())
 puts text_trans
 # text_eval = div.visit(Evaluator.new())
 # puts text_eval
+
+#Variable assignment
+runtime = Runtime.new
+Evaluator.new(runtime)

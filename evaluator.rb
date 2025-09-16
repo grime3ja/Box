@@ -1,4 +1,8 @@
 class Evaluator
+    def initialize(runtime)
+        @runtime = runtime
+    end
+
     def visit_integer(node)
         node
     end
@@ -214,20 +218,23 @@ class Evaluator
     end
     def visit_float_to_int(node)
         value = node.value.visit(self)
-
-        value.to_i
+        raise "Expected #{value} to be type FloatPrimitive" unless (value.is_a? FloatPrimitive)
+        f_to_i = value.to_i
+        IntegerPrimitive.new(f_to_i)
     end
 
     def visit_int_to_float(node)
         value = node.value.visit(self)
-
-        value.to_f
+        raise "Expected #{value} to be type Integer Primitive" unless (value.is_a? IntegerPrimitive)
+        i_to_f = value.to_f
+        FloatPrimitive.new(i_to_f)
     end
 
     def visit_assign(node)
         leftPrimitive = node.left.visit(self)
         rightPrimitive = node.right.visit(self)
-        rightPrimitive
+        raise "Expected #{leftPrimitive} to be type Variable Primitive" unless (leftPrimitive.is_a? VarPrimitive)
+        leftPrimitive.assign_value(rightPrimitive)
     end
 
     def visit_rvalue(node)
@@ -303,5 +310,23 @@ class Evaluator
 
         ge = leftPrimitive.value >= rightPrimitive.value
         BooleanPrimitive.new(ge)
+    end
+end
+
+class Runtime
+    def initialize
+        @vars = {}
+    end
+
+    def get(name)
+        @vars[name]
+    end
+
+    def set(name,value)
+        @vars[name] = value
+    end
+    
+    def to_s
+        @vars.to_s
     end
 end
