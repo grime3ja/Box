@@ -74,8 +74,8 @@ or_t = BitOr.new(
        )
 text_trans = or_t.visit(Translator.new())
 text_eval = or_t.visit(Evaluator.new(runtime))
-puts text_trans
-puts text_eval
+p text_trans
+p text_eval
 
 #Casting
 # float(7) / 2
@@ -83,8 +83,8 @@ runtime = Runtime.new
 div = Divide.new(IntToFloat.new(IntegerPrimitive.new(7)), IntegerPrimitive.new(2))
 text_trans = div.visit(Translator.new())
 text_eval = div.visit(Evaluator.new(runtime))
-puts text_trans
-puts text_eval
+p text_trans
+p text_eval
 
 #Assignment 
 # n = 9 & 3
@@ -96,17 +96,18 @@ assign_n = Assignment.new(
 n_rvalue = VarReference.new(assign_n)
 text_trans = assign_n.visit(Translator.new())
 text_eval = n_rvalue.visit(Evaluator.new(runtime))
-puts text_trans
-puts text_eval
+p text_trans
+p text_eval
 
 # Block Statements
 
-# Example 1 (Printing x variable)
+#Example 1 (Printing x variable)
 runtime = Runtime.new
 x = Assignment.new(
         VarPrimitive.new("x"), IntegerPrimitive.new(17)
     )
-PrintOut.new(VarReference.new(x)).visit(Evaluator.new)
+p VarReference.new(x).visit(Translator.new)
+PrintOut.new(VarReference.new(x)).visit(Evaluator.new(runtime))
 
 # Example 2 (Assignment and reassignment of variables, printing data)
 runtime = Runtime.new
@@ -124,14 +125,23 @@ count = Assignment.new(VarPrimitive.new("count"), sum)
 p count.visit(Translator.new)
 printOut = PrintOut.new(VarReference.new(count)).visit(Translator.new)
 p printOut
-PrintOut.new(VarReference.new(count)).visit(Evaluator.new)
+PrintOut.new(VarReference.new(count)).visit(Evaluator.new(runtime))
 
 # Example 3 (Complex print statements)
 runtime = Runtime.new
 n = Assignment.new(VarPrimitive.new("n"), IntegerPrimitive.new(18))
 # n <= 18
-PrintOut.new(LessThanOrEqualTo.new(VarReference.new(n), IntegerPrimitive.new(18))).visit(Evaluator.new)
+p (LessThanOrEqualTo.new(VarReference.new(n), IntegerPrimitive.new(18))).visit(Translator.new)
+PrintOut.new(LessThanOrEqualTo.new(VarReference.new(n), IntegerPrimitive.new(18))).visit(Evaluator.new(runtime))
 # 13 <= n && n <= 16
+p And.new(
+        LessThanOrEqualTo.new(
+            IntegerPrimitive.new(13), VarReference.new(n)
+        ), LessThanOrEqualTo.new(
+            VarReference.new(n), IntegerPrimitive.new(16)
+        )
+    )
+.visit(Translator.new)
 PrintOut.new(
     And.new(
         LessThanOrEqualTo.new(
@@ -140,14 +150,19 @@ PrintOut.new(
             VarReference.new(n), IntegerPrimitive.new(16)
         )
     )
-).visit(Evaluator.new)
+).visit(Evaluator.new(runtime))
+
 
 # -(n ** 2)
+p Negation.new(
+        Exponent.new(VarReference.new(n), IntegerPrimitive.new(2))
+    )
+.visit(Translator.new)
 PrintOut.new(
     Negation.new(
         Exponent.new(VarReference.new(n), IntegerPrimitive.new(2))
     )
-).visit(Evaluator.new)
+).visit(Evaluator.new(runtime))
 
 #Typecheck checks
 
@@ -156,24 +171,24 @@ PrintOut.new(
 runtime = Runtime.new
 bit_sh = BitLeft.new(FloatPrimitive.new(7.5), IntegerPrimitive.new(2))
 text_trans = bit_sh.visit(Translator.new())
-puts text_trans
+p text_trans
 # text_eval = bit_sh.visit(Evaluator.new())
-# puts text_eval
+# p text_eval
 
 #Greater
 # true >= 10
 runtime = Runtime.new
 great = GreaterThanOrEqualTo.new(BooleanPrimitive.new(true),IntegerPrimitive.new(10))
 text_trans = great.visit(Translator.new())
-puts text_trans
+p text_trans
 # text_eval = great.visit(Evaluator.new())
-# puts text_eval
+# p text_eval
 
 #Division
 # "fooo" / 3
 runtime = Runtime.new
 div = Divide.new(StringPrimitive.new("fooo"),IntegerPrimitive.new(3))
 text_trans = div.visit(Translator.new())
-puts text_trans
+p text_trans
 # text_eval = div.visit(Evaluator.new())
-# puts text_eval
+# p text_eval

@@ -193,10 +193,10 @@ class Evaluator
     end
 
     def visit_bit_not(node)
-        value = node.left.visit(self)
+        value = node.value.visit(self)
         raise "Expected #{value} to be type IntegerPrimitive" unless (value.is_a? IntegerPrimitive)
         
-        bit_not = ~leftPrimitive.value
+        bit_not = ~value.value
         IntegerPrimitive.new(bit_not)
     end
 
@@ -228,14 +228,14 @@ class Evaluator
     def visit_float_to_int(node)
         value = node.value.visit(self)
         raise "Expected #{value} to be type FloatPrimitive" unless (value.is_a? FloatPrimitive)
-        f_to_i = value.to_i
+        f_to_i = value.value.to_i
         IntegerPrimitive.new(f_to_i)
     end
 
     def visit_int_to_float(node)
         value = node.value.visit(self)
         raise "Expected #{value} to be type Integer Primitive" unless (value.is_a? IntegerPrimitive)
-        i_to_f = value.to_f
+        i_to_f = value.value.to_f
         FloatPrimitive.new(i_to_f)
     end
 
@@ -269,7 +269,7 @@ class Evaluator
     end
     
     def visit_print(node)
-        puts node.value.visit(self)
+        p node.value.visit(self)
         NullPrimitive.new
     end
 
