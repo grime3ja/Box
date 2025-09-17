@@ -52,9 +52,10 @@ class Evaluator
 
         sub = leftPrimitive.value - rightPrimitive.value
         if ((leftPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? FloatPrimitive))
-            return FloatPrimitive.new(sub)
+            FloatPrimitive.new(sub)
+        else
+            IntegerPrimitive.new(sub)
         end
-        IntegerPrimitive.new(sub)
     end
 
     def visit_multiply(node)
@@ -64,17 +65,11 @@ class Evaluator
         rightPrimitive = node.right.visit(self)
         raise "Expected #{rightPrimitive} to be type IntegerPrimitive, FloatPrimitive, or VarPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? VarPrimitive)
 
-        begin
-            product = leftPrimitive.value * rightPrimitive.value
-        rescue
-            product = leftPrimitive.value.value * rightPrimitive.value.value
-        end
+        product = leftPrimitive.value * rightPrimitive.value
         if ((leftPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? FloatPrimitive))
             FloatPrimitive.new(product)
-        elsif ((leftPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? IntegerPrimitive))
-            IntegerPrimitive.new(product)
         else
-
+            IntegerPrimitive.new(product)
         end
     end
 
@@ -85,11 +80,12 @@ class Evaluator
         rightPrimitive = node.right.visit(self)
         raise "Expected #{rightPrimitive} to be type IntegerPrimitive, FloatPrimitive, or VarPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? VarPrimitive)
 
-        quotient = leftPrimitive.value / rightPrimitive.value
+        quo = leftPrimitive.value / rightPrimitive.value
         if ((leftPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? FloatPrimitive))
-            FloatPrimitive.new(quotient)
+            FloatPrimitive.new(quo)
+        else
+            IntegerPrimitive.new(quo)
         end
-        IntegerPrimitive.new(quotient)
     end
 
     def visit_modulo(node)
@@ -117,17 +113,18 @@ class Evaluator
         exp = leftPrimitive.value ** rightPrimitive.value
         if ((leftPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? FloatPrimitive))
             FloatPrimitive.new(exp)
+        else
+            IntegerPrimitive.new(exp)
         end
-        IntegerPrimitive.new(exp)
     end
 
     
     def visit_negate(node)
-        val = node.left.visit(self)
+        val = node.value.visit(self)
         raise "Expected #{val} to be type IntegerPrimitive, FloatPrimitive, or VarPrimitive" unless (val.is_a? IntegerPrimitive) || (val.is_a? FloatPrimitive) || (val.is_a? VarPrimitive)
 
         negate = -val.value
-        if ((leftPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? FloatPrimitive))
+        if ((val.is_a? FloatPrimitive))
             FloatPrimitive.new(negate)
         end
         IntegerPrimitive.new(negate)
@@ -205,13 +202,17 @@ class Evaluator
 
     def visit_bit_left(node)
         leftPrimitive = node.left.visit(self)
-        raise "Expected #{leftPrimitive} to be type IntegerPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive)
+        raise "Expected #{leftPrimitive} to be type IntegerPrimitive, FloatPrimitive, or VarPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive) || (leftPrimitive.is_a? VarPrimitive)
         
         rightPrimitive = node.right.visit(self)
-        raise "Expected #{rightPrimitive} to be type IntegerPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive)
+        raise "Expected #{rightPrimitive} to be type IntegerPrimitive, FloatPrimitive, or VarPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? VarPrimitive)
 
-        bit_left = leftPrimitive.value << rightPrimitive.value
-        IntegerPrimitive.new(bit_left)
+        product = leftPrimitive.value << rightPrimitive.value
+        if ((leftPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? FloatPrimitive))
+            FloatPrimitive.new(product)
+        else
+            IntegerPrimitive.new(product)
+        end
     end
 
     def visit_bit_right(node)
@@ -253,13 +254,13 @@ class Evaluator
         value = @runtime.get(variable)
         case value
         when FloatPrimitive
-            FloatPrimitive.new(value)
+            FloatPrimitive.new(value.value)
         when StringPrimitive
             StringPrimitivePrimitive.new(value)
         when BooleanPrimitive
             BooleanPrimitive.new(value)
         when IntegerPrimitive
-            IntegerPrimitive.new(value)
+            IntegerPrimitive.new(value.value)
         when NullPrimitive
             NullPrimitive.new(value)
         else
@@ -274,10 +275,9 @@ class Evaluator
 
     def visit_equals(node)
         leftPrimitive = node.left.visit(self)
-        raise "Expected #{leftPrimitive} to be type BooleanPrimitive" unless (leftPrimitive.is_a? BooleanPrimitive)
-        
+        raise "Expected #{leftPrimitive} to be type IntegerPrimitive, FloatPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive)        
         rightPrimitive = node.right.visit(self)
-        raise "Expected #{rightPrimitive} to be type BooleanPrimitive" unless (rightPrimitive.is_a? BooleanPrimitive)
+        raise "Expected #{rightPrimitive} to be type IntegerPrimitive, FloatPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive)        
 
         eq = leftPrimitive.value == rightPrimitive.value
         BooleanPrimitive.new(eq)
@@ -285,10 +285,10 @@ class Evaluator
 
     def visit_not_equals(node)
         leftPrimitive = node.left.visit(self)
-        raise "Expected #{leftPrimitive} to be type BooleanPrimitive" unless (leftPrimitive.is_a? BooleanPrimitive)
+        raise "Expected #{leftPrimitive} to be type IntegerPrimitive, FloatPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive)        
         
         rightPrimitive = node.right.visit(self)
-        raise "Expected #{rightPrimitive} to be type BooleanPrimitive" unless (rightPrimitive.is_a? BooleanPrimitive)
+        raise "Expected #{rightPrimitive} to be type IntegerPrimitive, FloatPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive)        
 
         ne = leftPrimitive.value != rightPrimitive.value
         BooleanPrimitive.new(ne)
@@ -296,10 +296,10 @@ class Evaluator
 
     def visit_less_than(node)
         leftPrimitive = node.left.visit(self)
-        raise "Expected #{leftPrimitive} to be type BooleanPrimitive" unless (leftPrimitive.is_a? BooleanPrimitive)
+        raise "Expected #{leftPrimitive} to be type IntegerPrimitive, FloatPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive)        
         
         rightPrimitive = node.right.visit(self)
-        raise "Expected #{rightPrimitive} to be type BooleanPrimitive" unless (rightPrimitive.is_a? BooleanPrimitive)
+        raise "Expected #{rightPrimitive} to be type IntegerPrimitive, FloatPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive)        
 
         lt = leftPrimitive.value < rightPrimitive.value
         BooleanPrimitive.new(lt)
@@ -307,10 +307,10 @@ class Evaluator
 
     def visit_less_than_or_equal_to(node)
         leftPrimitive = node.left.visit(self)
-        raise "Expected #{leftPrimitive} to be type BooleanPrimitive" unless (leftPrimitive.is_a? BooleanPrimitive)
+        raise "Expected #{leftPrimitive} to be type IntegerPrimitive, FloatPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive)        
         
         rightPrimitive = node.right.visit(self)
-        raise "Expected #{rightPrimitive} to be type BooleanPrimitive" unless (rightPrimitive.is_a? BooleanPrimitive)
+        raise "Expected #{rightPrimitive} to be type IntegerPrimitive, FloatPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive)        
 
         le = leftPrimitive.value <= rightPrimitive.value
         BooleanPrimitive.new(le)
@@ -318,10 +318,10 @@ class Evaluator
 
     def visit_greater_than(node)
         leftPrimitive = node.left.visit(self)
-        raise "Expected #{leftPrimitive} to be type BooleanPrimitive" unless (leftPrimitive.is_a? BooleanPrimitive)
+        raise "Expected #{leftPrimitive} to be type IntegerPrimitive, FloatPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive)        
         
         rightPrimitive = node.right.visit(self)
-        raise "Expected #{rightPrimitive} to be type BooleanPrimitive" unless (rightPrimitive.is_a? BooleanPrimitive)
+        raise "Expected #{rightPrimitive} to be type IntegerPrimitive, FloatPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive)        
 
         gt = leftPrimitive.value > rightPrimitive.value
         BooleanPrimitive.new(gt)
@@ -329,10 +329,10 @@ class Evaluator
 
     def visit_greater_than_or_equal_to(node)
         leftPrimitive = node.left.visit(self)
-        raise "Expected #{leftPrimitive} to be type BooleanPrimitive" unless (leftPrimitive.is_a? BooleanPrimitive)
+        raise "Expected #{leftPrimitive} to be type IntegerPrimitive, FloatPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive)        
         
         rightPrimitive = node.right.visit(self)
-        raise "Expected #{rightPrimitive} to be type BooleanPrimitive" unless (rightPrimitive.is_a? BooleanPrimitive)
+        raise "Expected #{rightPrimitive} to be type IntegerPrimitive, FloatPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive)        
 
         ge = leftPrimitive.value >= rightPrimitive.value
         BooleanPrimitive.new(ge)

@@ -34,85 +34,82 @@ p arithmetic_negation_and_rvals.visit(Evaluator.new(runtime))
 #R-value lookup and shift
 # i << 3
 runtime = Runtime.new
-var_z = VarPrimitive.new('z', IntegerPrimitive.new(2))
-# assign_z = Assignment.new(var_z, IntegerPrimitive.new(2))
-rvalue_shift = BitLeft.new(VarReference.new(var_z),IntegerPrimitive.new(3))
-text_trans = rvalue_shift.visit(Translator.new())
-# text_eval = rvalue_shift.visit(Evaluator.new(runtime))
-puts text_trans
-# puts text_eval
+var_ref_z = VarReference.new(Assignment.new(VarPrimitive.new("z"), IntegerPrimitive.new(2)))
+rvalue_shift = BitLeft.new(var_ref_z,IntegerPrimitive.new(3))
+p rvalue_shift.visit(Translator.new())
+p rvalue_shift.visit(Evaluator.new(runtime))
 
 #R-value lookup and comparison
 # j == j + 0
-var_j = VarPrimitive.new('j')
-assign_j = Assignment.new(var_j, IntegerPrimitive.new(2))
-j_rvalue = VarReference.new(assign_j)
-add_j = Add.new(j_rvalue, IntegerPrimitive.new(0))
-rvalue_comp = Equals.new(j_rvalue,add_j)
 
-text_trans = rvalue_comp.visit(Translator.new())
-text_eval = rvalue_comp.visit(Evaluator.new())
+runtime = Runtime.new
+var_ref_j = VarReference.new(Assignment.new(VarPrimitive.new("j"), IntegerPrimitive.new(2)))
+add_j = Add.new(var_ref_j, IntegerPrimitive.new(0))
+rvalue_comp = Equals.new(var_ref_j, add_j)
 
-puts text_trans
-puts text_eval
+p rvalue_comp.visit(Translator.new)
+p rvalue_comp.visit(Evaluator.new(runtime))
 
 #Logic and comparison
 # !(3.3 > 3.2)
+runtime = Runtime.new
 logic = GreaterThan.new(FloatPrimitive.new(3.3), FloatPrimitive.new(3.2))
 not_op = Not.new(logic)
-text_trans = not_op.visit(Translator.new())
-text_eval = not_op.visit(Evaluator.new())
-puts text_trans
-puts text_eval
+p not_op.visit(Translator.new())
+p not_op.visit(Evaluator.new(runtime))
 
 #Double negation
 # --(6 * 8)
+runtime = Runtime.new
 mult = Multiply.new(IntegerPrimitive.new(6), IntegerPrimitive.new(8))
 neg = Negation.new(Negation.new(mult))
-text_trans = neg.visit(Translator.new())
-text_eval = neg.visit(Evaluator.new())
-puts text_trans
-puts text_eval
+p neg.visit(Translator.new())
+p neg.visit(Evaluator.new(runtime))
 
 #Bitwise op (Two's Complement)
 # ~5 | ~8
+runtime = Runtime.new
 or_t = BitOr.new(
            BitNot.new(IntegerPrimitive.new(5)), BitNot.new(IntegerPrimitive.new(8))
        )
 text_trans = or_t.visit(Translator.new())
-text_eval = or_t.visit(Evaluator.new())
+text_eval = or_t.visit(Evaluator.new(runtime))
 puts text_trans
 puts text_eval
 
 #Casting
 # float(7) / 2
+runtime = Runtime.new
 div = Divide.new(IntToFloat.new(IntegerPrimitive.new(7)), IntegerPrimitive.new(2))
 text_trans = div.visit(Translator.new())
-text_eval = div.visit(Evaluator.new())
+text_eval = div.visit(Evaluator.new(runtime))
 puts text_trans
 puts text_eval
 
 #Assignment 
 # n = 9 & 3
+runtime = Runtime.new
 var_n = VarPrimitive.new('n')
 assign_n = Assignment.new(
                var_n, BitAnd.new(IntegerPrimitive.new(9), IntegerPrimitive.new(3))
            )
 n_rvalue = VarReference.new(assign_n)
 text_trans = assign_n.visit(Translator.new())
-text_eval = n_rvalue.visit(Evaluator.new())
+text_eval = n_rvalue.visit(Evaluator.new(runtime))
 puts text_trans
 puts text_eval
 
 # Block Statements
 
 # Example 1 (Printing x variable)
+runtime = Runtime.new
 x = Assignment.new(
         VarPrimitive.new("x"), IntegerPrimitive.new(17)
     )
 PrintOut.new(VarReference.new(x)).visit(Evaluator.new)
 
 # Example 2 (Assignment and reassignment of variables, printing data)
+runtime = Runtime.new
 count = Assignment.new(
             VarPrimitive.new("count"), BitLeft.new(IntegerPrimitive.new(6), IntegerPrimitive.new(1))
         )
@@ -130,6 +127,7 @@ p printOut
 PrintOut.new(VarReference.new(count)).visit(Evaluator.new)
 
 # Example 3 (Complex print statements)
+runtime = Runtime.new
 n = Assignment.new(VarPrimitive.new("n"), IntegerPrimitive.new(18))
 # n <= 18
 PrintOut.new(LessThanOrEqualTo.new(VarReference.new(n), IntegerPrimitive.new(18))).visit(Evaluator.new)
@@ -155,6 +153,7 @@ PrintOut.new(
 
 #Shift
 # 7.5 << 2
+runtime = Runtime.new
 bit_sh = BitLeft.new(FloatPrimitive.new(7.5), IntegerPrimitive.new(2))
 text_trans = bit_sh.visit(Translator.new())
 puts text_trans
@@ -163,6 +162,7 @@ puts text_trans
 
 #Greater
 # true >= 10
+runtime = Runtime.new
 great = GreaterThanOrEqualTo.new(BooleanPrimitive.new(true),IntegerPrimitive.new(10))
 text_trans = great.visit(Translator.new())
 puts text_trans
@@ -171,12 +171,9 @@ puts text_trans
 
 #Division
 # "fooo" / 3
+runtime = Runtime.new
 div = Divide.new(StringPrimitive.new("fooo"),IntegerPrimitive.new(3))
 text_trans = div.visit(Translator.new())
 puts text_trans
 # text_eval = div.visit(Evaluator.new())
 # puts text_eval
-
-#Variable assignment
-runtime = Runtime.new
-Evaluator.new(runtime)
