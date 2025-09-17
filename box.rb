@@ -172,7 +172,7 @@ runtime = Runtime.new
 bit_sh = BitLeft.new(FloatPrimitive.new(7.5), IntegerPrimitive.new(2))
 text_trans = bit_sh.visit(Translator.new())
 p text_trans
-# text_eval = bit_sh.visit(Evaluator.new())
+# text_eval = bit_sh.visit(Evaluator.new(runtime))
 # p text_eval
 
 #Greater
@@ -181,7 +181,7 @@ runtime = Runtime.new
 great = GreaterThanOrEqualTo.new(BooleanPrimitive.new(true),IntegerPrimitive.new(10))
 text_trans = great.visit(Translator.new())
 p text_trans
-# text_eval = great.visit(Evaluator.new())
+# text_eval = great.visit(Evaluator.new(runtime))
 # p text_eval
 
 #Division
@@ -190,5 +190,5 @@ runtime = Runtime.new
 div = Divide.new(StringPrimitive.new("fooo"),IntegerPrimitive.new(3))
 text_trans = div.visit(Translator.new())
 p text_trans
-# text_eval = div.visit(Evaluator.new())
+# text_eval = div.visit(Evaluator.new(runtime))
 # p text_eval

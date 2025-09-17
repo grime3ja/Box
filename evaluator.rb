@@ -202,17 +202,13 @@ class Evaluator
 
     def visit_bit_left(node)
         leftPrimitive = node.left.visit(self)
-        raise "Expected #{leftPrimitive} to be type IntegerPrimitive, FloatPrimitive, or VarPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive) || (leftPrimitive.is_a? FloatPrimitive) || (leftPrimitive.is_a? VarPrimitive)
+        raise "Expected #{leftPrimitive} to be type IntegerPrimitive" unless (leftPrimitive.is_a? IntegerPrimitive)
         
         rightPrimitive = node.right.visit(self)
-        raise "Expected #{rightPrimitive} to be type IntegerPrimitive, FloatPrimitive, or VarPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive) || (rightPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? VarPrimitive)
+        raise "Expected #{rightPrimitive} to be type IntegerPrimitive" unless (rightPrimitive.is_a? IntegerPrimitive)
 
         product = leftPrimitive.value << rightPrimitive.value
-        if ((leftPrimitive.is_a? FloatPrimitive) || (rightPrimitive.is_a? FloatPrimitive))
-            FloatPrimitive.new(product)
-        else
-            IntegerPrimitive.new(product)
-        end
+        IntegerPrimitive.new(product)
     end
 
     def visit_bit_right(node)
