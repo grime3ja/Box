@@ -348,8 +348,4 @@ class Runtime
     def set(name,value)
         @vars[name] = value
     end
-    
-    def to_s
-        @vars.to_s
-    end
 end
