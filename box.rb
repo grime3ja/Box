@@ -172,8 +172,8 @@ runtime = Runtime.new
 bit_sh = BitLeft.new(FloatPrimitive.new(7.5), IntegerPrimitive.new(2))
 text_trans = bit_sh.visit(Translator.new())
 p text_trans
-# text_eval = bit_sh.visit(Evaluator.new(runtime))
-# p text_eval
+text_eval = bit_sh.visit(Evaluator.new(runtime))
+p text_eval
 
 #Greater
 # true >= 10
