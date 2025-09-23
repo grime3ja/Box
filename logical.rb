@@ -3,9 +3,9 @@ class And
     def initialize(left, right)
         @left = left
         @right = right
+    end
     def visit(visitor)
         visitor.visit_and(self)
-    end
     end
 end
 
