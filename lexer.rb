@@ -29,13 +29,6 @@ class Lexer
         @curr_token = ""
     end
 
-    def has_capture_emit(item, type)
-        if has(item)
-            capture
-            emit_token(type)
-        end
-    end
-
     def lex_tokens
         @start_index = @index
         if has_digit
@@ -50,7 +43,8 @@ class Lexer
                     end
                     emit_token(:float_literal)
                 else
-                    raise "Expected one or more digits at index #{@index} following the decimal point"
+                    emit_token(:invalid_float_literal)
+                    # raise "Expected one or more digits at index #{@index} following the decimal point"
                 end
             else
                 emit_token(:integer_literal)
@@ -63,52 +57,88 @@ class Lexer
             emit_token(:subtraction)
         elsif has("*")
             capture
-            emit_token(:multiplication)
+            if has("*")
+                capture
+                emit_token(:exponentiation)
+            else
+                emit_token(:multiplication)
+            end
         elsif has("/")
             capture
             emit_token(:division)
-        elsif has("**")
-            capture
-            capture
-            emit_token(:exponentiation)
         elsif has("%")
             capture
             emit_token(:modulo)
-        elsif has("&&")
-            capture
-            capture
-            emit_token(:and)
-        elsif has("||")
-            capture
-            capture
-            emit_token(:or)
         elsif has("!")
             capture
             emit_token(:not)
         elsif has("&")
             capture
-            emit_token(:bit_and)
+            if has("&")
+                capture
+                emit_token(:and)
+            else
+                emit_token(:bit_and)
+            end
         elsif has("|")
             capture
-            emit_token(:bit_or)
+            if has("|")
+                capture
+                emit_token(:or)
+            else
+                emit_token(:bit_or)
+            end
         elsif has("^")
             capture
             emit_token(:bit_xor)
         elsif has("~")
             capture
             emit_token(:bit_not)
-        elsif has("<<")
+        elsif has("<")
             capture
+            if has("<")
+                capture
+                emit_token(:bit_left)
+            elsif has("=")
+                capture
+                emit_token(:less_than_or_equal_to)
+            else
+                emit_token(:less_than)
+            end
+        elsif has(">")
             capture
-            emit_token(:bit_left)
-        elsif has(">>")
+            if has(">")
+                capture
+                emit_token(:bit_right)
+            elsif has("=")
+                capture
+                emit_token(:greater_than_or_equal_to)
+            else
+                emit_token(:less_than)
+            end
+        elsif has("=")
             capture
+            if has("=")
+                capture
+                emit_token(:relational_equal)
+            else
+                emit_token(:assignment_equal)
+            end
+        elsif has("!")
             capture
-            emit_token(:bit_right)
-        else
+            if has("=")
+                capture
+                emit_token(:relational_not_equal)
+            else
+                emit_token(:exclamation)
+            end
+        elsif has(" ")
             while has(" ")
                 @index += 1
             end
+        else
+            capture
+            emit_token(:unknown_token)
         end
     end
     
@@ -120,7 +150,7 @@ class Lexer
     end
 end
 
-lex = Lexer.new("7 * 4.6 + 3 % 12")
+lex = Lexer.new("62=+color^!~")
 tokens = lex.lex_string
 for token in tokens
     p token  
