@@ -18,6 +18,10 @@ class Lexer
         @expression[@index].to_i.to_s.eql?(@expression[@index])
     end
 
+    def has_letter
+        @expression[@index]&.match?(/[A-Za-z]/)
+    end
+
     def capture
         @curr_token << @expression[@index]
         @index += 1
@@ -132,6 +136,18 @@ class Lexer
             else
                 emit_token(:exclamation)
             end
+        elsif has ('"')
+            capture
+            while !has('"')
+                capture
+            end
+            capture
+            emit_token(:quote_string)
+        elsif has_letter
+            while has_letter
+                capture
+            end
+            emit_token(:string)
         elsif has(" ")
             while has(" ")
                 @index += 1
@@ -150,8 +166,8 @@ class Lexer
     end
 end
 
-lex = Lexer.new("62=+color^!~")
+lex = Lexer.new('62=+color^!~')
 tokens = lex.lex_string
 for token in tokens
-    p token  
+    p token
 end
