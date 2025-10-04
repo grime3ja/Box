@@ -147,7 +147,11 @@ class Lexer
             while has_letter
                 capture
             end
-            emit_token(:string)
+            if @curr_token.eql?("print")
+              emit_token(:print)
+            else 
+              emit_token(:string)
+            end
         elsif has(" ")
             while has(" ")
                 @index += 1
@@ -166,7 +170,7 @@ class Lexer
     end
 end
 
-lex = Lexer.new('62=+color^!~')
+lex = Lexer.new('print "hello world"')
 tokens = lex.lex_string
 for token in tokens
     p token
