@@ -170,8 +170,8 @@ class Lexer
     end
 end
 
-lex = Lexer.new('print "hello world"')
-tokens = lex.lex_string
-for token in tokens
-    p token
-end
+# lex = Lexer.new('print "hello world"')
+# tokens = lex.lex_string
+# for token in tokens
+#     p token
+# end
