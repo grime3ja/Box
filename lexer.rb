@@ -156,6 +156,12 @@ class Lexer
             while has(" ")
                 @index += 1
             end
+        elsif has ("(")
+            capture
+            emit_token(:left_parenthesis)
+        elsif has (")")
+            capture
+            emit_token(:right_parenthesis)
         else
             capture
             emit_token(:unknown_token)
@@ -171,7 +177,8 @@ class Lexer
 end
 
 # lex = Lexer.new('print "hello world"')
-# tokens = lex.lex_string
-# for token in tokens
-#     p token
-# end
+lex = Lexer.new("(5 + 3 - 2 + hello)")
+tokens = lex.lex_string
+for token in tokens
+    p token
+end
