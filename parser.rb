@@ -36,28 +36,38 @@ class Parser
     result = parse_lvl6
   end
 
-  def parse_lvl6
-    left = parse_lvl5
+  def parse_lvl7
+    left = parse_lvl6
     if has(:assignment_equal)
       advance
-      right = parse_lvl5
+      right = parse_lvl6
       return Assignment.new(left,right)
     end
     left
+  end
+  def parse_lvl6
+    left = parse_lvl5
+    loop do 
+      case curr_token&.type
+      when :addition
+        advance
+        right = parse_lvl5
+        left = Add.new(left,right)
+      when :subtraction
+        advance
+        right = parse_lvl5
+        left = Subtraction.new(left,right)
+      else
+        break
+      end
+    end
+  left
   end
 
   def parse_lvl5
     left = parse_lvl4
     loop do 
       case curr_token&.type
-      when :addition
-        advance
-        right = parse_lvl4
-        left = Add.new(left,right)
-      when :subtraction
-        advance
-        right = parse_lvl4
-        left = Subtraction.new(left,right)
       when :multiplication
         advance
         right = parse_lvl4
@@ -237,3 +247,4 @@ lexer = Lexer.new("5 + 3 * 2")
 tokens = lexer.lex_string
 parser = Parser.new(tokens)
 ast = parser.parse
+pp ast
