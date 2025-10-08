@@ -118,7 +118,7 @@ class Lexer
                 capture
                 emit_token(:greater_than_or_equal_to)
             else
-                emit_token(:less_than)
+                emit_token(:greater_than)
             end
         elsif has("=")
             capture
@@ -148,7 +148,9 @@ class Lexer
                 capture
             end
             if @curr_token.eql?("print")
-              emit_token(:print)
+                emit_token(:print)
+            elsif @curr_token.eql?("true") or @curr_token.eql?("false")
+                emit_token(:boolean_literal)
             else 
               emit_token(:string)
             end
@@ -177,8 +179,8 @@ class Lexer
 end
 
 # lex = Lexer.new('print "hello world"')
-lex = Lexer.new("(5 + 3 - 2 + hello)")
-tokens = lex.lex_string
-for token in tokens
-    p token
-end
+# lex = Lexer.new("(5 + 3 - 2 + hello)")
+# tokens = lex.lex_string
+# for token in tokens
+#     p token
+# end
