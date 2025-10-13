@@ -176,11 +176,6 @@ class Parser
   end
 
   def parse_lvl1
-    if has(:not)
-      advance
-      operand = parse_lvl1
-      return Not.new(operand)
-    end
     left = parse_lvl0
     while has(:dot)
       advance
@@ -197,7 +192,11 @@ class Parser
     left
   end
   def parse_lvl0
-    if has(:bit_not)
+    if has(:not)
+      advance
+      operand = parse_lvl0
+      return Not.new(operand)
+    elsif has(:bit_not)
       advance
       op = parse_lvl0
       return BitNot.new(op)
@@ -242,8 +241,3 @@ class Parser
   end
 end
 
-lexer = Lexer.new("5 + 3 * 2")
-tokens = lexer.lex_string
-parser = Parser.new(tokens)
-ast = parser.parse
-pp ast
