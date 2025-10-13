@@ -91,12 +91,6 @@ class Parser
     left
   end
   def parse_lvl4
-    if has(:not)
-      advance
-      operand = parse_lvl4
-      return Not.new(operand)
-    end
-
     left = parse_lvl3
     loop do
       case curr_token&.type
@@ -182,6 +176,11 @@ class Parser
   end
 
   def parse_lvl1
+    if has(:not)
+      advance
+      operand = parse_lvl1
+      return Not.new(operand)
+    end
     left = parse_lvl0
     while has(:dot)
       advance
