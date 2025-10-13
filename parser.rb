@@ -33,9 +33,17 @@ class Parser
   end
 
   def parse
-    result = parse_lvl6
+    result = parse_lvl8
   end
-
+  def parse_lvl8
+    if has (:print)
+      advance
+      expression = parse_lvl7
+      return PrintOut.new(expression)
+    else
+      parse_lvl7
+    end
+  end
   def parse_lvl7
     left = parse_lvl6
     if has(:assignment_equal)
