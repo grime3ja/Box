@@ -33,9 +33,17 @@ class Parser
   end
 
   def parse
-    result = parse_lvl6
+    result = parse_lvl8
   end
-
+  def parse_lvl8
+    if has (:print)
+      advance
+      expression = parse_lvl7
+      return PrintOut.new(expression)
+    else
+      parse_lvl7
+    end
+  end
   def parse_lvl7
     left = parse_lvl6
     if has(:assignment_equal)
@@ -91,12 +99,6 @@ class Parser
     left
   end
   def parse_lvl4
-    if has(:not)
-      advance
-      operand = parse_lvl4
-      return Not.new(operand)
-    end
-
     left = parse_lvl3
     loop do
       case curr_token&.type
@@ -198,7 +200,11 @@ class Parser
     left
   end
   def parse_lvl0
-    if has(:bit_not)
+    if has(:not)
+      advance
+      operand = parse_lvl0
+      return Not.new(operand)
+    elsif has(:bit_not)
       advance
       op = parse_lvl0
       return BitNot.new(op)
@@ -243,8 +249,3 @@ class Parser
   end
 end
 
-lexer = Lexer.new("5 + 3 * 2")
-tokens = lexer.lex_string
-parser = Parser.new(tokens)
-ast = parser.parse
-pp ast
