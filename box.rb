@@ -35,7 +35,7 @@ require_relative "evaluator"
 # end
 
 runtime = Runtime.new
-variables = ["x = 5", "print x + x * x", "x = 999", "print x"]
+variables = ["x = 5", "print x + 5", "x = 999", "print x"]
 variables.each do |expression|
     puts expression
     lex = Lexer.new(expression)
@@ -47,5 +47,6 @@ variables.each do |expression|
     parsed = parse.parse
     pp parsed
     p parsed.visit(Evaluator.new(runtime))
+    p runtime
     puts 
 end

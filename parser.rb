@@ -242,7 +242,10 @@ class Parser
     elsif has(:string) || has(:variable)
       token = curr_token
       advance
-      return VarPrimitive.new(token.text)
+      if (has(:assignment_equal))
+        return VarPrimitive.new(token.text)
+      end
+      return VarReference.new(token.text)
     else
       raise "Unknown type"
     end
