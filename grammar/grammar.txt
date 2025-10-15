@@ -1,9 +1,9 @@
 
-level 8 = print level7
+level8 = print level7
        | level7
 
 level7 = level7 "=" level6
-       | level 6
+       | level6
 
 level6 = level6 + level5
        | level6 - level5

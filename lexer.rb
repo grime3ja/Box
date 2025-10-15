@@ -55,10 +55,6 @@ class Lexer
                     emit_token(:float_literal)
                 else
                     backtrack
-                    # emit_token(:invalid_float_literal)
-                    # capture
-                    # emit_token(:dot)
-                    # raise "Expected one or more digits at index #{@index} following the decimal point"
                 end
             else
                 emit_token(:integer_literal)

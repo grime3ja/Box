@@ -2,22 +2,22 @@ require_relative "parser"
 require_relative "lexer"
 require_relative "evaluator"
 
-arithmetic_strings = ["5 + 2", "10 * 6 - 10 % 4", "~6", "2 ** 9", "45 & ---(1 + 3)", "9 << 1"]
+# arithmetic_strings = ["5 + 2", "10 * 6 - 10 % 4", "~6", "2 ** 9", "45 & ---(1 + 3)", "9 << 1"]
 
-#parse each string, then with the parsed version evaluate the result
-arithmetic_strings.each do |expression|
-    puts expression
-    lex = Lexer.new(expression)
-    tokens = lex.lex_string
-    # for token in tokens
-    #     p token
-    # end
-    ar_parse = Parser.new(tokens)
-    ar_parsed = ar_parse.parse
-    pp ar_parsed
-    p ar_parsed.visit(Evaluator.new(Runtime.new))
-    puts
-end
+# #parse each string, then with the parsed version evaluate the result
+# arithmetic_strings.each do |expression|
+#     puts expression
+#     lex = Lexer.new(expression)
+#     tokens = lex.lex_string
+#     for token in tokens
+#         p token
+#     end
+#     ar_parse = Parser.new(tokens)
+#     ar_parsed = ar_parse.parse
+#     pp ar_parsed
+#     p ar_parsed.visit(Evaluator.new(Runtime.new))
+#     puts
+# end
 
 # last_executed_statement_tests = ["print !!!!false", "print true || !false", "print (5 > 3) && !(2 > 8)"]
 
@@ -50,15 +50,15 @@ end
 #     p var_parsed.visit(Evaluator.new(runtime))
 # end
 
-# # invalid tests
-# # expression = "62=+color^!~"
-# expression = "573489 | print"
-# # expression = "<< 2"
-# puts expression
-# lex = Lexer.new(expression)
-# tokens = lex.lex_string
-# # for token in tokens
-# #     p token
-# # end
-# var_parse = Parser.new(tokens)
-# var_parsed = var_parse.parse
+# invalid tests
+# expression = "62=+color^!~"
+expression = "573489 | print"
+# expression = "<< 2"
+puts expression
+lex = Lexer.new(expression)
+tokens = lex.lex_string
+for token in tokens
+    p token
+end
+var_parse = Parser.new(tokens)
+var_parsed = var_parse.parse
