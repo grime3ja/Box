@@ -239,14 +239,14 @@ class Evaluator
         leftPrimitive = node.left.visit(self)
         rightPrimitive = node.right.visit(self)
         raise "Expected #{leftPrimitive} to be type Variable Primitive" unless (leftPrimitive.is_a? VarPrimitive)
-        @runtime.set(leftPrimitive, rightPrimitive)
+        @runtime.set(leftPrimitive.value, rightPrimitive)
     end
 
     def visit_rvalue(node)
-        if node.value.class.eql?(Assignment)
-          node.value.visit(self)
+        if node.value.is_a?(Assignment)
+          return node.value.visit(self)
         end
-        variable = node.value.left
+        variable = node.value
         value = @runtime.get(variable)
         case value
         when FloatPrimitive
