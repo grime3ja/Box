@@ -36,7 +36,7 @@ last_executed_statement_tests.each do |expression|
 end
 
 runtime = Runtime.new
-variables = ["x = 5", "print x + 5", "x = 999", "print x"]
+variables = ["x = 5", "print x + x * x", "x = 999", "print x"]
 variables.each do |expression|
     puts expression
     lex = Lexer.new(expression)
@@ -54,11 +54,11 @@ end
 expression = "62=+color^!~"
 expression = "573489 | print"
 expression = "<< 2"
-puts expression
-lex = Lexer.new(expression)
-tokens = lex.lex_string
-# for token in tokens
-#     p token
-# end
-var_parse = Parser.new(tokens)
-var_parsed = var_parse.parse
+# puts expression
+# lex = Lexer.new(expression)
+# tokens = lex.lex_string
+# # for token in tokens
+# #     p token
+# # end
+# var_parse = Parser.new(tokens)
+# var_parsed = var_parse.parse
