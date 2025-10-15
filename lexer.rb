@@ -26,6 +26,12 @@ class Lexer
         @curr_token << @expression[@index]
         @index += 1
     end
+
+    def backtrack
+        # @curr_token.slice!(-1)
+        @curr_token = ""
+        @index -= 1
+    end
     
     def emit_token(type)
         token = Token.new(type, @curr_token, @start_index, @index-1)
@@ -42,17 +48,25 @@ class Lexer
             if has(".")
                 capture
                 if has_digit
+                    capture
                     while has_digit
                         capture
                     end
                     emit_token(:float_literal)
                 else
-                    emit_token(:invalid_float_literal)
+                    backtrack
+                    # emit_token(:invalid_float_literal)
+                    # capture
+                    # emit_token(:dot)
                     # raise "Expected one or more digits at index #{@index} following the decimal point"
                 end
             else
                 emit_token(:integer_literal)
             end
+        if has(".")
+            capture
+            emit_token(:dot)
+        end
         elsif has("+")
             capture
             emit_token(:addition)
@@ -144,13 +158,17 @@ class Lexer
             capture
             emit_token(:quote_string)
         elsif has_letter
-            while has_letter
+            while has_letter or has("_")
                 capture
             end
             if @curr_token.eql?("print")
                 emit_token(:print)
             elsif @curr_token.eql?("true") or @curr_token.eql?("false")
                 emit_token(:boolean_literal)
+            elsif @curr_token.eql?("to_f")
+                emit_token(:to_f)
+            elsif @curr_token.eql?("to_i")
+                emit_token(:to_i)
             else 
               emit_token(:string)
             end

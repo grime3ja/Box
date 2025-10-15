@@ -24,7 +24,7 @@ class Parser
     if has(type)
       advance
     else
-      raise "Expected token #{type}"
+      raise "Expected token #{type} at index #{@i}"
     end
   end
 
@@ -194,7 +194,7 @@ class Parser
         advance
         left = IntToFloat.new(left)
       else
-        raise "Unknown method"
+        raise "Unknown method at index #{@i}, your options are float to int (to_i) and int to float (to_f)"
       end
     end
     left
@@ -247,7 +247,22 @@ class Parser
       end
       return VarReference.new(token.text)
     else
-      raise "Unknown type"
+      t = @tokens[@i].type
+      error = "Unknown type #{t} at index #{@i}"
+      number_errors = [:addition, :multiplication, :division, :subtraction]
+      bitwise_errors = [:bit_and, :bit_left, :bit_right, :bit_not, :bit_xor]
+      relational_errors = [:less_than, :less_than_or_equal_to, :greater_than, :greater_than_or_equal_to, :relational_equal, :relational_not_equal]
+      if number_errors.include?(t)
+        raise "#{error}, expected variable or number values surrounded by an arithmetic operator"
+      elsif bitwise_errors.include?(t)
+        raise "#{error}, expected a variable or integer values surrounded by a bitwise operator"
+      elsif relational_errors.include?(t)
+        raise "#{error}, expected variable or number values surrounded by a relational boolean operator"
+      elsif t.eql?(:print)
+        raise "#{error}, expected to be in the format of print *what you would like to print*"
+      else
+        raise "Error message has not been added yet, please request a fix for: #{error}"
+      end
     end
   end
 end

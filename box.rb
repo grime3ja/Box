@@ -41,11 +41,24 @@ variables.each do |expression|
     puts expression
     lex = Lexer.new(expression)
     tokens = lex.lex_string
-    for token in tokens
-        p token
-    end
+    # for token in tokens
+    #     p token
+    # end
     var_parse = Parser.new(tokens)
     var_parsed = var_parse.parse
     pp var_parsed
     p var_parsed.visit(Evaluator.new(runtime))
 end
+
+# invalid tests
+expression = "62=+color^!~"
+expression = "573489 | print"
+expression = "<< 2"
+puts expression
+lex = Lexer.new(expression)
+tokens = lex.lex_string
+# for token in tokens
+#     p token
+# end
+var_parse = Parser.new(tokens)
+var_parsed = var_parse.parse
