@@ -19,46 +19,46 @@ arithmetic_strings.each do |expression|
     puts
 end
 
-last_executed_statement_tests = ["print !!!!false", "print true || !false", "print (5 > 3) && !(2 > 8)"]
+# last_executed_statement_tests = ["print !!!!false", "print true || !false", "print (5 > 3) && !(2 > 8)"]
 
-last_executed_statement_tests.each do |expression|
-    puts expression
-    lex = Lexer.new(expression)
-    tokens = lex.lex_string
-    # for token in tokens
-    #     p token
-    # end
-    parse = Parser.new(tokens)
-    parsed = parse.parse
-    pp parsed
-    p parsed.visit(Evaluator.new(Runtime.new))
-    puts 
-end
-
-runtime = Runtime.new
-variables = ["x = 5", "print x + 5", "x = 999", "print x"]
-variables.each do |expression|
-    puts expression
-    lex = Lexer.new(expression)
-    tokens = lex.lex_string
-    # for token in tokens
-    #     p token
-    # end
-    var_parse = Parser.new(tokens)
-    var_parsed = var_parse.parse
-    pp var_parsed
-    p var_parsed.visit(Evaluator.new(runtime))
-end
-
-# invalid tests
-expression = "62=+color^!~"
-expression = "573489 | print"
-expression = "<< 2"
-puts expression
-lex = Lexer.new(expression)
-tokens = lex.lex_string
-# for token in tokens
-#     p token
+# last_executed_statement_tests.each do |expression|
+#     puts expression
+#     lex = Lexer.new(expression)
+#     tokens = lex.lex_string
+#     # for token in tokens
+#     #     p token
+#     # end
+#     parse = Parser.new(tokens)
+#     parsed = parse.parse
+#     pp parsed
+#     p parsed.visit(Evaluator.new(Runtime.new))
+#     puts 
 # end
-var_parse = Parser.new(tokens)
-var_parsed = var_parse.parse
+
+# runtime = Runtime.new
+# variables = ["x = 5", "print x + x * x", "x = 999", "print x"]
+# variables.each do |expression|
+#     puts expression
+#     lex = Lexer.new(expression)
+#     tokens = lex.lex_string
+#     # for token in tokens
+#     #     p token
+#     # end
+#     var_parse = Parser.new(tokens)
+#     var_parsed = var_parse.parse
+#     pp var_parsed
+#     p var_parsed.visit(Evaluator.new(runtime))
+# end
+
+# # invalid tests
+# # expression = "62=+color^!~"
+# expression = "573489 | print"
+# # expression = "<< 2"
+# puts expression
+# lex = Lexer.new(expression)
+# tokens = lex.lex_string
+# # for token in tokens
+# #     p token
+# # end
+# var_parse = Parser.new(tokens)
+# var_parsed = var_parse.parse
