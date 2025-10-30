@@ -1,0 +1,2 @@
+int int
+mul = a * 2
