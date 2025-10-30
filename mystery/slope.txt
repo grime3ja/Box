@@ -1,0 +1,2 @@
+int int int
+y = slope * x + y_int
