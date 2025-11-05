@@ -40,16 +40,40 @@ inputs.refresh
 w = width / 4.25
 table = Window.new(height / 4, width / 2, height / 4, w)
 
-table.setpos(1, width / 30)
-table.addstr("a: ")
-table.setpos(1, width / 10)
-table.addstr("b: ")
-table.setpos(1, width / 6)
-table.addstr("c: ")
-table.setpos(1, width / 3)
-table.addstr("actual: ")
-table.setpos(1, width / 2)
-table.addstr("expected: ")
+table.setpos(1, 3.5)
+table.addstr(" a ")
+table.setpos(2, 0)
+table.addstr("_________")
+a_column = table.derwin(height / 4, width / 15, 0, 0)
+a_column.setpos(1, width / 10)
+a_column.box('|', '-')
+a_column.refresh
+table.setpos(1, width / 12)
+table.addstr(" b ")
+table.setpos(2, 10)
+table.addstr("________")
+table.refresh
+b_column = table.derwin(height / 4, width / 15, 0, w / 2)
+b_column.setpos(1, width / 11)
+b_column.box('|', '-')
+b_column.refresh
+act_column = table.derwin(height / 4, 34, 0, w / 2)
+act_column.setpos(1, width / 3)
+act_column.box('|', '-')
+act_column.refresh
+table.setpos(1, 21)
+table.addstr(" c ")
+table.setpos(2, 19)
+table.addstr("________")
+table.setpos(1, 35)
+table.addstr(" actual ")
+table.setpos(2, 28)
+table.addstr("_______________________")
+table.setpos(1, 60)
+table.addstr(" expected ")
+table.setpos(2, 52)
+table.addstr("________________________")
+
 
 table.box('|', '-')
 table.refresh
@@ -58,7 +82,7 @@ output.setpos(1, width / 4.25)
 output.addstr("Output")
 output.box('|', '-')
 output.refresh
-y = 3
+y = 4
 
 loop do
   function.setpos(0, 0)
@@ -75,7 +99,7 @@ loop do
         if i == 10
           lex_string << "#{letter.chr} = #{param_string}"
           inputs.setpos(4,3)
-          j = [4, 10, 16]
+          j = [4, 13, 22]
           current = 0
           lex_string.each do |value|
             var_lex = Lexer.new(value)
