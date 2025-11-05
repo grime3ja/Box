@@ -38,31 +38,32 @@ inputs.box('|', '-')
 inputs.refresh
 
 w = width / 4.25
-actual = Window.new(height / 4, width / 2, height / 4, w)
+table = Window.new(height / 4, width / 2, height / 4, w)
 
-actual.setpos(1, width / 30)
-actual.addstr("a: ")
-actual.setpos(1, width / 10)
-actual.addstr("b: ")
-actual.setpos(1, width / 6)
-actual.addstr("c: ")
-actual.setpos(1, width / 3)
-actual.addstr("actual: ")
-actual.setpos(1, width / 2)
-actual.addstr("expected: ")
+table.setpos(1, width / 30)
+table.addstr("a: ")
+table.setpos(1, width / 10)
+table.addstr("b: ")
+table.setpos(1, width / 6)
+table.addstr("c: ")
+table.setpos(1, width / 3)
+table.addstr("actual: ")
+table.setpos(1, width / 2)
+table.addstr("expected: ")
 
-actual.box('|', '-')
-actual.refresh
+table.box('|', '-')
+table.refresh
 output = Window.new(height / 4, width / 2, height / 2, w)
 output.setpos(1, width / 4.25)
 output.addstr("Output")
 output.box('|', '-')
 output.refresh
+y = 3
 
 loop do
   function.setpos(0, 0)
   c = function.getch
-  lex_string = ""
+  lex_string = []
   if c == 'q'
     break
   elsif c == 'i'
@@ -74,17 +75,31 @@ loop do
         if i == 10
           lex_string << "#{letter.chr} = #{param_string}"
           inputs.setpos(4,3)
-          var_lex = Lexer.new(lex_string)
-          var_tokens = var_lex.lex_string
-          var_parse = Parser.new(var_tokens)
-          var_parsed = var_parse.parse
-          var_parsed.visit(Evaluator.new(runtime))
+          j = [4, 10, 16]
+          current = 0
+          lex_string.each do |value|
+            var_lex = Lexer.new(value)
+            var_tokens = var_lex.lex_string
+            var_parse = Parser.new(var_tokens)
+            var_parsed = var_parse.parse
+            var_parsed.visit(Evaluator.new(runtime))
+            table.setpos(y,j[current])
+            table.addstr(var_tokens[-1].text)
+            current += 1
+            # j += 8
+          end
+          y += 1
+          table.refresh
           expr_lex = Lexer.new(expr)
           expr_tokens = expr_lex.lex_string
           expr_parse = Parser.new(expr_tokens).parse
-          expr_eval = expr_parse.visit(Evaluator.new(runtime))
-          expr_translate = expr_eval.visit(Translator.new()).to_s
           output.setpos(3,3)
+          begin
+            expr_eval = expr_parse.visit(Evaluator.new(runtime))
+            expr_translate = expr_eval.visit(Translator.new()).to_s
+          rescue StandardError => e
+            output.addstr(e.message)
+          end
           output.addstr(expr_translate)
           output.refresh
           break
@@ -93,6 +108,7 @@ loop do
           inputs.addstr(i)
           x += 1
           lex_string << "#{letter.chr} = #{param_string} "
+          # output.addstr(lex_string.to_s)
           letter += 1
           param_string = ""
         else
