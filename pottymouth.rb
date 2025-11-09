@@ -5,6 +5,25 @@ require_relative 'translator'
 require_relative 'evaluator'
 include Curses
 
+module Modes
+  FUNCTION = 0
+  INPUT = 1
+  WAITING = 2
+end
+
+def display_help_messages(mode)
+  case mode
+    when Modes::FUNCTION
+      "<FUNCTION>:\n1. Write your guess for what the mystery function is (hint make sure you use a, b, and c for parameters)\n2. Press enter to enter <INPUT> mode"
+    when Modes::INPUT
+      "<INPUT>:\n1. Write your parameter list\n2. Press enter to run your function against our mystery function"
+    when Modes::WAITING
+      "Press 'f' for <FUNCTION> mode, otherwise 'q' to exit Pottymouth"
+    else
+      "Invalid mode. Press 'f' for <FUNCTION> mode, otherwise 'q' to exit Pottymouth"
+  end
+end
+
 init_screen
 noecho
 curs_set(0)
@@ -74,19 +93,32 @@ table.addstr("________________________")
 table.box('|', '-')
 table.refresh
 output = Window.new(height / 4, width / 2, height / 2, w)
+display = Window.new(4, width - 5, height - 5, 5)
 y = 4
+
+mode = Modes::WAITING
 
 loop do
   output.setpos(1, (Curses.cols) / 4.25)
   output.addstr("Output")
   output.box('|', '-')
   output.refresh
+  
+  display.setpos(1, 1)
+  display.clear
+  display.addstr(display_help_messages(mode))
+  display.refresh
+
   function.setpos(0, 0)
   c = function.getch
   lex_string = []
   if c == 'q'
     break
   elsif c == 'f'
+    mode = Modes::FUNCTION
+    display.clear
+    display.addstr(display_help_messages(mode))
+    display.refresh
     act_expr = ""
       loop do
         chr = function.getch
@@ -95,6 +127,10 @@ loop do
           function.setpos(3, 2)
           function.addstr("Guess has been entered: #{act_expr}")
           function.refresh 
+          mode = Modes::INPUT
+          display.clear
+          display.addstr(display_help_messages(mode))
+          display.refresh
           break
         else
           act_expr << chr
@@ -109,6 +145,7 @@ loop do
       loop do
         i = inputs.getch
         if i == 10
+          mode = Modes::WAITING
           lex_string << "#{letter.chr} = #{param_string}"
           inputs.setpos(4,3)
           j = [4, 13, 22]
