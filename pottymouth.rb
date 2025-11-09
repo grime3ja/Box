@@ -11,28 +11,24 @@ curs_set(0)
 
 width = Curses.cols
 height = Curses.lines
-runtime = Runtime.new
-eval = Evaluator.new(runtime)
+actual_runtime = Runtime.new
+expected_runtime = Runtime.new
 w = width / 2.75
 function = Window.new(height / 8, width / 4, 0, w)
 i = 1
-function.setpos(i, width / 12)
+function.setpos(i, width / 20)
 lines = File.readlines(ARGV[0]).map(&:chomp)
-expr = lines[1]
-p expr
-File.foreach(ARGV[0]) do |line|
-  function.setpos(i, width / 12)
-  i += 1
-  function.addstr(line)
-end
+exp_type = lines[0]
+exp_expr = lines[1]
 
+function.addstr("Enter your function guess here")
 function.box('|', '-')
 function.refresh
 
 inputs = Window.new(height / 8, width / 4, height / 8, w)
 i = 1
-inputs.setpos(i, width / 16)
-inputs.addstr("input parameters here")
+inputs.setpos(i, width / 30)
+inputs.addstr("Input Parameters, expecting: #{exp_type}")
 
 inputs.box('|', '-')
 inputs.refresh
@@ -40,9 +36,9 @@ inputs.refresh
 w = width / 4.25
 table = Window.new(height / 4, width / 2, height / 4, w)
 
-table.setpos(1, 3.5)
+table.setpos(1, width / 35)
 table.addstr(" a ")
-table.setpos(2, 0)
+table.setpos(2, width / 130)
 table.addstr("_________")
 a_column = table.derwin(height / 4, width / 15, 0, 0)
 a_column.setpos(1, width / 10)
@@ -50,8 +46,8 @@ a_column.box('|', '-')
 a_column.refresh
 table.setpos(1, width / 12)
 table.addstr(" b ")
-table.setpos(2, 10)
-table.addstr("________")
+table.setpos(2, 12)
+table.addstr("__________")
 table.refresh
 b_column = table.derwin(height / 4, width / 15, 0, w / 2)
 b_column.setpos(1, width / 11)
@@ -61,36 +57,52 @@ act_column = table.derwin(height / 4, 34, 0, w / 2)
 act_column.setpos(1, width / 3)
 act_column.box('|', '-')
 act_column.refresh
-table.setpos(1, 21)
+table.setpos(1, 26)
 table.addstr(" c ")
-table.setpos(2, 19)
-table.addstr("________")
-table.setpos(1, 35)
+table.setpos(2, 23)
+table.addstr("__________")
+table.setpos(1, 40)
 table.addstr(" actual ")
-table.setpos(2, 28)
-table.addstr("_______________________")
+table.setpos(2, 34)
+table.addstr("_____________________")
 table.setpos(1, 60)
 table.addstr(" expected ")
-table.setpos(2, 52)
+table.setpos(2, 56)
 table.addstr("________________________")
 
 
 table.box('|', '-')
 table.refresh
 output = Window.new(height / 4, width / 2, height / 2, w)
-output.setpos(1, width / 4.25)
-output.addstr("Output")
-output.box('|', '-')
-output.refresh
 y = 4
 
 loop do
+  output.setpos(1, (Curses.cols) / 4.25)
+  output.addstr("Output")
+  output.box('|', '-')
+  output.refresh
   function.setpos(0, 0)
   c = function.getch
   lex_string = []
   if c == 'q'
     break
-  elsif c == 'i'
+  elsif c == 'f'
+    act_expr = ""
+      loop do
+        chr = function.getch
+        if chr == 10
+          act_expr = act_expr.strip
+          function.setpos(3, 2)
+          function.addstr("Guess has been entered: #{act_expr}")
+          function.refresh 
+          break
+        else
+          act_expr << chr
+          function.setpos(2, 2)
+          function.addstr(act_expr)
+          function.refresh
+        end
+      end
       x = 2
       param_string = ""
       letter = 97
@@ -101,38 +113,77 @@ loop do
           inputs.setpos(4,3)
           j = [4, 13, 22]
           current = 0
-          lex_string.each do |value|
-            var_lex = Lexer.new(value)
-            var_tokens = var_lex.lex_string
-            var_parse = Parser.new(var_tokens)
-            var_parsed = var_parse.parse
-            var_parsed.visit(Evaluator.new(runtime))
-            table.setpos(y,j[current])
-            table.addstr(var_tokens[-1].text)
-            current += 1
-            # j += 8
+          exp_translate = ""
+          actual_translate = ""
+          begin
+            lex_string.each do |value|
+              var_lex = Lexer.new(value)
+              var_tokens = var_lex.lex_string
+              var_parse = Parser.new(var_tokens)
+              var_parsed = var_parse.parse
+              var_parsed.visit(Evaluator.new(actual_runtime))
+              var_parsed.visit(Evaluator.new(expected_runtime))
+              table.setpos(y,j[current])
+              table.addstr(var_tokens[-1].text)
+              current += 1
+            end
+            exp_lex = Lexer.new(exp_expr)
+            exp_tokens = exp_lex.lex_string
+            exp_parse = Parser.new(exp_tokens).parse
+            act_lex = Lexer.new(act_expr)
+            act_tokens = act_lex.lex_string
+            act_parse = Parser.new(act_tokens).parse
+            table.setpos(y,60)
+            exp_eval = exp_parse.visit(Evaluator.new(expected_runtime))
+            exp_translate = exp_eval.visit(Translator.new).to_s
+            actual_eval = act_parse.visit(Evaluator.new(actual_runtime))
+            actual_translate = actual_eval.visit(Translator.new).to_s
+            table.addstr(exp_translate)
+            table.setpos(y, 40)
+            table.addstr(actual_translate)
+            if actual_translate == exp_translate
+              output.clear
+              output.setpos(2, 3)
+              output.addstr("Your function is correct!")
+              output.refresh
+            else
+              output.clear
+              output.setpos(2, 3)
+              output.addstr("#{act_expr} is not the correct function.")
+              output.refresh
+            end
+            table.refresh
+            output.refresh
+          rescue StandardError => e
+            output.clear
+            output.setpos(2, 3)
+            output.addstr(e.message)
+            output.refresh
           end
           y += 1
           table.refresh
-          expr_lex = Lexer.new(expr)
-          expr_tokens = expr_lex.lex_string
-          expr_parse = Parser.new(expr_tokens).parse
-          output.setpos(3,3)
-          begin
-            expr_eval = expr_parse.visit(Evaluator.new(runtime))
-            expr_translate = expr_eval.visit(Translator.new()).to_s
-          rescue StandardError => e
-            output.addstr(e.message)
-          end
-          output.addstr(expr_translate)
-          output.refresh
+          param_string = ""
+          letter = 97
+          lex_string.clear
+          inputs.clear
+          function.clear
+          function.setpos(1, (Curses.cols) / 20)
+          function.addstr("Enter your function guess here")
+          function.box('|', '-')
+          function.refresh
+          lines = File.readlines(ARGV[0]).map(&:chomp)
+          exp_type = lines[0]
+          inputs.setpos(1, (Curses.cols) / 30)
+          inputs.addstr("Input Parameters, expecting: #{exp_type}")
+          inputs.box('|', '-')
+          inputs.refresh
+          x = 2
           break
         elsif i == ' '
           inputs.setpos(3,x)
           inputs.addstr(i)
           x += 1
           lex_string << "#{letter.chr} = #{param_string} "
-          # output.addstr(lex_string.to_s)
           letter += 1
           param_string = ""
         else
