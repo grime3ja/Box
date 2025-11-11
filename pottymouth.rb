@@ -23,15 +23,12 @@ def display_help_messages(mode)
       "Invalid mode. Press 'f' for <FUNCTION> mode, otherwise 'q' to exit Pottymouth"
   end
 end
-
 init_screen
 noecho
 curs_set(0)
 
 width = Curses.cols
 height = Curses.lines
-actual_runtime = Runtime.new
-expected_runtime = Runtime.new
 w = width / 2.75
 function = Window.new(height / 8, width / 4, 0, w)
 i = 1
@@ -94,51 +91,10 @@ table.box('|', '-')
 table.refresh
 output = Window.new(height / 4, width / 2, height / 2, w)
 display = Window.new(4, width - 5, height - 5, 5)
-y = 4
-
-mode = Modes::WAITING
-
-loop do
-  output.setpos(1, (Curses.cols) / 4.25)
-  output.addstr("Output")
-  output.box('|', '-')
-  output.refresh
-  
-  display.setpos(1, 1)
-  display.clear
-  display.addstr(display_help_messages(mode))
-  display.refresh
-
-  function.setpos(0, 0)
-  c = function.getch
-  lex_string = []
-  if c == 'q'
-    break
-  elsif c == 'f'
-    mode = Modes::FUNCTION
-    display.clear
-    display.addstr(display_help_messages(mode))
-    display.refresh
-    act_expr = ""
-      loop do
-        chr = function.getch
-        if chr == 10
-          act_expr = act_expr.strip
-          function.setpos(3, 2)
-          function.addstr("Guess has been entered: #{act_expr}")
-          function.refresh 
-          mode = Modes::INPUT
-          display.clear
-          display.addstr(display_help_messages(mode))
-          display.refresh
-          break
-        else
-          act_expr << chr
-          function.setpos(2, 2)
-          function.addstr(act_expr)
-          function.refresh
-        end
-      end
+y_position = 4
+def param_eval(inputs, lex_string, table, act_expr,exp_expr,output, y)
+  actual_runtime = Runtime.new
+  expected_runtime = Runtime.new
       x = 2
       param_string = ""
       letter = 97
@@ -203,11 +159,6 @@ loop do
           letter = 97
           lex_string.clear
           inputs.clear
-          function.clear
-          function.setpos(1, (Curses.cols) / 20)
-          function.addstr("Enter your function guess here")
-          function.box('|', '-')
-          function.refresh
           lines = File.readlines(ARGV[0]).map(&:chomp)
           exp_type = lines[0]
           inputs.setpos(1, (Curses.cols) / 30)
@@ -229,7 +180,61 @@ loop do
           x += 1
           param_string << i.chr
         end
-      end 
+      end
+      return y
+    end
+mode = Modes::WAITING
+act_expr = ""
+loop do
+  output.setpos(1, (Curses.cols) / 4.25)
+  output.addstr("Output")
+  output.box('|', '-')
+  output.refresh
+  
+  display.setpos(1, 1)
+  display.clear
+  display.addstr(display_help_messages(mode))
+  display.refresh
+
+  function.setpos(0, 0)
+  c = function.getch
+  lex_string = []
+  if c == 'q'
+    break
+  elsif c == 'f'
+    function.clear
+    function.setpos(1, (Curses.cols) / 20)
+    function.addstr("Enter your function guess here")
+    function.box('|', '-')
+    function.refresh
+    mode = Modes::FUNCTION
+    display.clear
+    display.addstr(display_help_messages(mode))
+    display.refresh
+      loop do
+        chr = function.getch
+        if chr == 10
+          act_expr = act_expr.strip
+          function.setpos(3, 2)
+          function.addstr("Guess has been entered: #{act_expr}")
+          function.refresh 
+          mode = Modes::INPUT
+          display.clear
+          display.addstr(display_help_messages(mode))
+          display.refresh
+          break
+        else
+          act_expr << chr
+          function.setpos(2, 2)
+          function.addstr(act_expr)
+          function.refresh
+        end
+      end
+      y_position = param_eval(inputs, lex_string, table, act_expr,exp_expr,output, y_position)
+      
+  elsif c == 'i'
+    y_position = param_eval(inputs, lex_string, table, act_expr,exp_expr,output, y_position)
+     
   else
     # input_panel.clear
     # input_panel.addstr(c.ord.to_s)
