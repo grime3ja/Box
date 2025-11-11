@@ -18,7 +18,7 @@ def display_help_messages(mode)
     when Modes::INPUT
       "<INPUT>:\n1. Write your parameter list\n2. Press enter to run your function against our mystery function"
     when Modes::WAITING
-      "Press 'f' for <FUNCTION> mode, otherwise 'q' to exit Pottymouth"
+      "Press 'f' for <FUNCTION> mode, 'i' for <INPUT> mode, otherwise 'q' to exit Pottymouth"
     else
       "Invalid mode. Press 'f' for <FUNCTION> mode, otherwise 'q' to exit Pottymouth"
   end
@@ -95,94 +95,94 @@ y_position = 4
 def param_eval(inputs, lex_string, table, act_expr,exp_expr,output, y)
   actual_runtime = Runtime.new
   expected_runtime = Runtime.new
-      x = 2
+  x = 2
+  param_string = ""
+  letter = 97
+  loop do
+    i = inputs.getch
+    if i == 10
+      # mode = Modes::WAITING
+      lex_string << "#{letter.chr} = #{param_string}"
+      inputs.setpos(4,3)
+      j = [4, 13, 22]
+      current = 0
+      exp_translate = ""
+      actual_translate = ""
+      begin
+        lex_string.each do |value|
+          var_lex = Lexer.new(value)
+          var_tokens = var_lex.lex_string
+          var_parse = Parser.new(var_tokens)
+          var_parsed = var_parse.parse
+          var_parsed.visit(Evaluator.new(actual_runtime))
+          var_parsed.visit(Evaluator.new(expected_runtime))
+          table.setpos(y,j[current])
+          table.addstr(var_tokens[-1].text)
+          current += 1
+        end
+        exp_lex = Lexer.new(exp_expr)
+        exp_tokens = exp_lex.lex_string
+        exp_parse = Parser.new(exp_tokens).parse
+        act_lex = Lexer.new(act_expr)
+        act_tokens = act_lex.lex_string
+        act_parse = Parser.new(act_tokens).parse
+        table.setpos(y,60)
+        exp_eval = exp_parse.visit(Evaluator.new(expected_runtime))
+        exp_translate = exp_eval.visit(Translator.new).to_s
+        actual_eval = act_parse.visit(Evaluator.new(actual_runtime))
+        actual_translate = actual_eval.visit(Translator.new).to_s
+        table.addstr(exp_translate)
+        table.setpos(y, 40)
+        table.addstr(actual_translate)
+        if actual_translate == exp_translate
+          output.clear
+          output.setpos(2, 3)
+          output.addstr("Your function is correct!")
+          output.refresh
+        else
+          output.clear
+          output.setpos(2, 3)
+          output.addstr("#{act_expr} is not the correct function.")
+          output.refresh
+        end
+        table.refresh
+        output.refresh
+      rescue StandardError => e
+        output.clear
+        output.setpos(2, 3)
+        output.addstr(e.message)
+        output.refresh
+      end
+      y += 1
+      table.refresh
       param_string = ""
       letter = 97
-      loop do
-        i = inputs.getch
-        if i == 10
-          mode = Modes::WAITING
-          lex_string << "#{letter.chr} = #{param_string}"
-          inputs.setpos(4,3)
-          j = [4, 13, 22]
-          current = 0
-          exp_translate = ""
-          actual_translate = ""
-          begin
-            lex_string.each do |value|
-              var_lex = Lexer.new(value)
-              var_tokens = var_lex.lex_string
-              var_parse = Parser.new(var_tokens)
-              var_parsed = var_parse.parse
-              var_parsed.visit(Evaluator.new(actual_runtime))
-              var_parsed.visit(Evaluator.new(expected_runtime))
-              table.setpos(y,j[current])
-              table.addstr(var_tokens[-1].text)
-              current += 1
-            end
-            exp_lex = Lexer.new(exp_expr)
-            exp_tokens = exp_lex.lex_string
-            exp_parse = Parser.new(exp_tokens).parse
-            act_lex = Lexer.new(act_expr)
-            act_tokens = act_lex.lex_string
-            act_parse = Parser.new(act_tokens).parse
-            table.setpos(y,60)
-            exp_eval = exp_parse.visit(Evaluator.new(expected_runtime))
-            exp_translate = exp_eval.visit(Translator.new).to_s
-            actual_eval = act_parse.visit(Evaluator.new(actual_runtime))
-            actual_translate = actual_eval.visit(Translator.new).to_s
-            table.addstr(exp_translate)
-            table.setpos(y, 40)
-            table.addstr(actual_translate)
-            if actual_translate == exp_translate
-              output.clear
-              output.setpos(2, 3)
-              output.addstr("Your function is correct!")
-              output.refresh
-            else
-              output.clear
-              output.setpos(2, 3)
-              output.addstr("#{act_expr} is not the correct function.")
-              output.refresh
-            end
-            table.refresh
-            output.refresh
-          rescue StandardError => e
-            output.clear
-            output.setpos(2, 3)
-            output.addstr(e.message)
-            output.refresh
-          end
-          y += 1
-          table.refresh
-          param_string = ""
-          letter = 97
-          lex_string.clear
-          inputs.clear
-          lines = File.readlines(ARGV[0]).map(&:chomp)
-          exp_type = lines[0]
-          inputs.setpos(1, (Curses.cols) / 30)
-          inputs.addstr("Input Parameters, expecting: #{exp_type}")
-          inputs.box('|', '-')
-          inputs.refresh
-          x = 2
-          break
-        elsif i == ' '
-          inputs.setpos(3,x)
-          inputs.addstr(i)
-          x += 1
-          lex_string << "#{letter.chr} = #{param_string} "
-          letter += 1
-          param_string = ""
-        else
-          inputs.setpos(3,x)
-          inputs.addstr(i)
-          x += 1
-          param_string << i.chr
-        end
-      end
-      return y
+      lex_string.clear
+      inputs.clear
+      lines = File.readlines(ARGV[0]).map(&:chomp)
+      exp_type = lines[0]
+      inputs.setpos(1, (Curses.cols) / 30)
+      inputs.addstr("Input Parameters, expecting: #{exp_type}")
+      inputs.box('|', '-')
+      inputs.refresh
+      x = 2
+      break
+    elsif i == ' '
+      inputs.setpos(3,x)
+      inputs.addstr(i)
+      x += 1
+      lex_string << "#{letter.chr} = #{param_string} "
+      letter += 1
+      param_string = ""
+    else
+      inputs.setpos(3,x)
+      inputs.addstr(i)
+      x += 1
+      param_string << i.chr
     end
+  end
+  return y
+end
 mode = Modes::WAITING
 act_expr = ""
 loop do
@@ -202,6 +202,7 @@ loop do
   if c == 'q'
     break
   elsif c == 'f'
+    act_expr = ""
     function.clear
     function.setpos(1, (Curses.cols) / 20)
     function.addstr("Enter your function guess here")
@@ -231,9 +232,15 @@ loop do
         end
       end
       y_position = param_eval(inputs, lex_string, table, act_expr,exp_expr,output, y_position)
+      mode = Modes::WAITING
       
   elsif c == 'i'
+    mode = Modes::INPUT
+    display.clear
+    display.addstr(display_help_messages(mode))
+    display.refresh
     y_position = param_eval(inputs, lex_string, table, act_expr,exp_expr,output, y_position)
+    mode = Modes::WAITING
      
   else
     # input_panel.clear
