@@ -94,7 +94,7 @@ table.refresh
 output = Window.new(height / 4, width / 2, height / 2, w)
 display = Window.new(4, width - 5, height - 5, 5)
 y_position = 4
-def param_eval(inputs, lex_string, table, act_expr,exp_expr,output, y)
+def param_eval(inputs, lex_string, table, act_expr, exp_expr, output, y, exp_type)
   actual_runtime = Runtime.new
   expected_runtime = Runtime.new
   x = 2
@@ -102,7 +102,17 @@ def param_eval(inputs, lex_string, table, act_expr,exp_expr,output, y)
   letter = 97
   loop do
     i = inputs.getch
-    if i == 10
+    if i == 8 || i == 127
+      inputs.clear
+      inputs.setpos(1, (Curses.cols)/ 30)
+      inputs.addstr("Input Parameters, expecting: #{exp_type}")
+      inputs.box('|', '-')
+      param_string.chop!
+      inputs.setpos(3, 2)
+      inputs.addstr(param_string)
+      x -= 1
+      inputs.refresh
+    elsif i == 10
       # mode = Modes::WAITING
       lex_string << "#{letter.chr} = #{param_string}"
       inputs.setpos(4,3)
@@ -242,7 +252,7 @@ loop do
           function.refresh
         end
       end
-      y_position = param_eval(inputs, lex_string, table, act_expr,exp_expr,output, y_position)
+      y_position = param_eval(inputs, lex_string, table, act_expr,exp_expr,output, y_position, exp_type)
       mode = Modes::WAITING
       
   elsif c == 'i'
@@ -250,7 +260,7 @@ loop do
     display.clear
     display.addstr(display_help_messages(mode))
     display.refresh
-    y_position = param_eval(inputs, lex_string, table, act_expr,exp_expr,output, y_position)
+    y_position = param_eval(inputs, lex_string, table, act_expr,exp_expr,output, y_position, exp_type)
     mode = Modes::WAITING
   else
     mode = Modes::INVALID
