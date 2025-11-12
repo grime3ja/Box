@@ -41,7 +41,8 @@ function.addstr("Enter your function guess here")
 function.box('|', '-')
 function.refresh
 
-inputs = Window.new(height / 8, width / 4, height / 8, w)
+w = width / 3.15
+inputs = Window.new(height / 8, width / 3, height / 8, w)
 i = 1
 inputs.setpos(i, width / 30)
 inputs.addstr("Input Parameters, expecting: #{exp_type}")
