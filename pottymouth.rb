@@ -5,6 +5,8 @@ require_relative 'translator'
 require_relative 'evaluator'
 include Curses
 
+# helper message modes so users aren't lost with button clicking
+# we took a vim/nano route, which will be shown in the demo
 module Modes
   FUNCTION = 0
   INPUT = 1
@@ -24,6 +26,7 @@ def display_help_messages(mode)
       "Invalid mode. Press 'f' for <FUNCTION> mode, 'i' for <INPUT> mode, otherwise 'q' to exit Pottymouth"
   end
 end
+# main screen
 init_screen
 noecho
 curs_set(0)
@@ -31,6 +34,8 @@ curs_set(0)
 width = Curses.cols
 height = Curses.lines
 w = width / 2.75
+
+# user input function window
 function = Window.new(height / 8, width / 4, 0, w)
 i = 1
 function.setpos(i, width / 20)
@@ -42,6 +47,7 @@ function.addstr("Enter your function guess here")
 function.box('|', '-')
 function.refresh
 
+# user input parameter window
 w = width / 3.15
 inputs = Window.new(height / 8, width / 3, height / 8, w)
 i = 1
@@ -51,9 +57,12 @@ inputs.addstr("Input Parameters, expecting: #{exp_type}")
 inputs.box('|', '-')
 inputs.refresh
 
+# table that displays what the user input parameters are,
+# and actual and expected results when the function is ran
 w = width / 4.25
 table = Window.new(height / 4, width / 2, height / 4, w)
 
+# Lord forgive us for this portion, for we know not what we do
 table.setpos(1, width / 35)
 table.addstr(" a ")
 table.setpos(2, width / 130)
@@ -91,10 +100,17 @@ table.addstr("________________________________")
 
 table.box('|', '-')
 table.refresh
+
+# output window for potential error messages
 output = Window.new(height / 4, width / 2, height / 2, w)
+
+# window for help messages
 display = Window.new(4, width - 5, height - 5, 5)
 y_position = 4
+
+# function that handles parameter entering, lexing and parsing
 def param_eval(inputs, lex_string, table, act_expr, exp_expr, output, y, exp_type)
+  # runtimes that run the user input function and the actual function for our program
   actual_runtime = Runtime.new
   expected_runtime = Runtime.new
   x = 2
@@ -102,6 +118,7 @@ def param_eval(inputs, lex_string, table, act_expr, exp_expr, output, y, exp_typ
   letter = 97
   loop do
     i = inputs.getch
+    # backspace
     if i == 8 || i == 127
       inputs.clear
       inputs.setpos(1, (Curses.cols)/ 30)
@@ -112,14 +129,15 @@ def param_eval(inputs, lex_string, table, act_expr, exp_expr, output, y, exp_typ
       inputs.addstr(param_string)
       x -= 1
       inputs.refresh
+    # enter
     elsif i == 10
-      # mode = Modes::WAITING
       lex_string << "#{letter.chr} = #{param_string}"
       inputs.setpos(4,3)
       j = [4, 13, 22]
       current = 0
       exp_translate = ""
       actual_translate = ""
+      # do the lexing and parsing, catch and display any errors that occur
       begin
         lex_string.each do |value|
           var_lex = Lexer.new(value)
@@ -186,6 +204,7 @@ def param_eval(inputs, lex_string, table, act_expr, exp_expr, output, y, exp_typ
       lex_string << "#{letter.chr} = #{param_string} "
       letter += 1
       param_string = ""
+    # if it is none of the special keys, display it in the parameter box
     else
       inputs.setpos(3,x)
       inputs.addstr(i)
@@ -211,8 +230,10 @@ loop do
   function.setpos(0, 0)
   c = function.getch
   lex_string = []
+  # exit out of the main window
   if c == 'q'
     break
+  # function mode
   elsif c == 'f'
     act_expr = ""
     function.clear
@@ -224,37 +245,38 @@ loop do
     display.clear
     display.addstr(display_help_messages(mode))
     display.refresh
-      loop do
-        chr = function.getch
-        if chr == 10
-          act_expr = act_expr.strip
-          function.setpos(3, 2)
-          function.addstr("Guess has been entered: #{act_expr}")
-          function.refresh 
-          mode = Modes::INPUT
-          display.clear
-          display.addstr(display_help_messages(mode))
-          display.refresh
-          break
-        elsif chr == 8 || chr == 127
-          function.clear
-          function.setpos(1, (Curses.cols) / 20)
-          function.addstr("Enter your function guess here")
-          function.box('|', '-')
-          act_expr.chop!
-          function.setpos(2, 2)
-          function.addstr(act_expr)
-          function.refresh
-        else
-          act_expr << chr
-          function.setpos(2, 2)
-          function.addstr(act_expr)
-          function.refresh
-        end
+    # get the user input function
+    loop do
+      chr = function.getch
+      if chr == 10
+        act_expr = act_expr.strip
+        function.setpos(3, 2)
+        function.addstr("Guess has been entered: #{act_expr}")
+        function.refresh 
+        mode = Modes::INPUT
+        display.clear
+        display.addstr(display_help_messages(mode))
+        display.refresh
+        break
+      elsif chr == 8 || chr == 127
+        function.clear
+        function.setpos(1, (Curses.cols) / 20)
+        function.addstr("Enter your function guess here")
+        function.box('|', '-')
+        act_expr.chop!
+        function.setpos(2, 2)
+        function.addstr(act_expr)
+        function.refresh
+      else
+        act_expr << chr
+        function.setpos(2, 2)
+        function.addstr(act_expr)
+        function.refresh
       end
-      y_position = param_eval(inputs, lex_string, table, act_expr,exp_expr,output, y_position, exp_type)
-      mode = Modes::WAITING
-      
+    end
+    y_position = param_eval(inputs, lex_string, table, act_expr,exp_expr,output, y_position, exp_type)
+    mode = Modes::WAITING
+  # input parameter mode
   elsif c == 'i'
     mode = Modes::INPUT
     display.clear
@@ -262,6 +284,7 @@ loop do
     display.refresh
     y_position = param_eval(inputs, lex_string, table, act_expr,exp_expr,output, y_position, exp_type)
     mode = Modes::WAITING
+  # invalid mode
   else
     mode = Modes::INVALID
   end
