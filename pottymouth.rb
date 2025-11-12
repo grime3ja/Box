@@ -9,6 +9,7 @@ module Modes
   FUNCTION = 0
   INPUT = 1
   WAITING = 2
+  INVALID = 3
 end
 
 def display_help_messages(mode)
@@ -20,7 +21,7 @@ def display_help_messages(mode)
     when Modes::WAITING
       "Press 'f' for <FUNCTION> mode, 'i' for <INPUT> mode, otherwise 'q' to exit Pottymouth"
     else
-      "Invalid mode. Press 'f' for <FUNCTION> mode, otherwise 'q' to exit Pottymouth"
+      "Invalid mode. Press 'f' for <FUNCTION> mode, 'i' for <INPUT> mode, otherwise 'q' to exit Pottymouth"
   end
 end
 init_screen
@@ -225,6 +226,15 @@ loop do
           display.addstr(display_help_messages(mode))
           display.refresh
           break
+        elsif chr == 8 || chr == 127
+          function.clear
+          function.setpos(1, (Curses.cols) / 20)
+          function.addstr("Enter your function guess here")
+          function.box('|', '-')
+          act_expr.chop!
+          function.setpos(2, 2)
+          function.addstr(act_expr)
+          function.refresh
         else
           act_expr << chr
           function.setpos(2, 2)
@@ -242,10 +252,8 @@ loop do
     display.refresh
     y_position = param_eval(inputs, lex_string, table, act_expr,exp_expr,output, y_position)
     mode = Modes::WAITING
-     
   else
-    # input_panel.clear
-    # input_panel.addstr(c.ord.to_s)
+    mode = Modes::INVALID
   end
 end
 
