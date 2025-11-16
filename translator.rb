@@ -130,4 +130,28 @@ class Translator
     def visit_print(node)
         "print #{node.value.visit(self)}"
     end
+
+    def visit_if(node)
+        "if #{node.condition.visit(self)}\n#{node.block.visit(self)}\n#{node.elsee ? "else\n#{node.else_block.visit(self)}\n" : ""}end"
+    end
+
+    def visit_while(node)
+        "while #{node.condition.visit(self)}\n#{node.block.visit(self)}\nend"
+    end
+
+    def visit_for_each(node)
+        "for #{node.var.visit(self)} in [#{node.start.visit(self)}, #{node.endd.visit(self)}]\n#{node.block.visit(self)}\nend"
+    end
+
+    def visit_function(node)
+        "function #{node.name.visit(self)}(#{node.parameters.visit(self)})\n#{node.body.visit(self)}\nend"
+    end
+
+    def visit_return(node)
+        "return #{node.val.visit(self)}"
+    end
+
+    def visit_function_call(node)
+        "#{node.name.visit(self)}(#{node.parameters.visit(self)})"
+    end
 end
