@@ -167,18 +167,10 @@ class Lexer
                 emit_token(:to_i)
             elsif @curr_token.eql?("if")
                 emit_token(:if)
-                while (has_letter or has("_"))
-                    capture
-                end
-                emit_token(:condition)
             elsif @curr_token.eql?("else")
                 emit_token(:else)
             elsif @curr_token.eql?("while")
                 emit_token(:while)
-                while (has_letter or has("_"))
-                    capture
-                end
-                emit_token(:condition)
             elsif @curr_token.eql?("for")
                 emit_token(:for)
             elsif @curr_token.eql?("in")
