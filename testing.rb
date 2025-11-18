@@ -8,17 +8,18 @@ require_relative "cast"
 require_relative "variable"
 require_relative "relational"
 require_relative "control_flow"
-
+runtime = Runtime.new
 if_statement = If.new(GreaterThan.new(IntegerPrimitive.new(5), IntegerPrimitive.new(6)), # if 5 > 6
                         IntegerPrimitive.new(1),                                         #   1
                       BooleanPrimitive.new(true),                                        # else
                         IntegerPrimitive.new(0))                                         #   0
-p if_statement.visit(Translator.new)
-
-while_statement = While.new(GreaterThan.new(IntegerPrimitive.new(5), IntegerPrimitive.new(6)), # while 5 > 6
-                        IntegerPrimitive.new(1))                                               #   1
+p if_statement.visit(Evaluator.new(runtime))
+a_assign = Assignment.new(VarPrimitive.new("a"), IntegerPrimitive.new(0))
+var_ref_a = VarReference.new(a_assign)
+while_statement = While.new(LessThan.new(var_ref_a, IntegerPrimitive.new(6)), # while 5 > 6
+                        var_ref_a = VarReference.new(Assignment.new(var_ref_a,Add.new(var_ref_a, IntegerPrimitive.new(1)))))                                               #   1
                                                                                                # end
-p while_statement.visit(Translator.new)
+p while_statement.visit(Evaluator.new(runtime))
 
 for_statement = ForEach.new(VarReference.new(Assignment.new(VarPrimitive.new("i"), IntegerPrimitive.new(0))), IntegerPrimitive.new(0), IntegerPrimitive.new(5), # for i in [0, 5]
                         IntegerPrimitive.new(1))                                                                                                                #   1

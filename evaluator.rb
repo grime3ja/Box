@@ -333,6 +333,34 @@ class Evaluator
         ge = leftPrimitive.value >= rightPrimitive.value
         BooleanPrimitive.new(ge)
     end
+
+    def visit_if(node)
+        if(node.condition.visit(self).value)
+            node.block.visit(self)
+        elsif(node.elsee.visit(self).value)
+            node.else_block.visit(self)
+        else
+            NullPrimitive.new
+        end
+    end
+
+    def visit_while(node)
+        
+        end
+    end
+
+    def visit_for_each(node)
+        
+    end
+
+    def visit_function(node)
+    end
+
+    def visit_return(node)
+    end
+
+    def visit_function_call(node)
+    end
 end
 
 
