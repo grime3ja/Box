@@ -1,3 +1,4 @@
+require_relative 'primitive'
 class Evaluator
     # attr_reader :runtime
     def initialize(runtime)
@@ -345,12 +346,32 @@ class Evaluator
     end
 
     def visit_while(node)
-        
+        if(node.condition.visit(self).value)
+            node.block.visit(self)
+            node.visit(self)
+        else
+            NullPrimitive.new
         end
     end
 
     def visit_for_each(node)
-        
+        raise "Expected #{node.var} to be type VarPrimitive" unless (node.var.is_a? VarPrimitive)
+        @runtime.set(node.var.visit(self).value, node.start.visit(self))
+        (node.start.visit(self).value + 1..node.endd.visit(self).value).each do |i|
+            node.block.visit(self)
+            @runtime.set(node.var.visit(self).value, IntegerPrimitive.new(i))
+        end
+        @runtime.get(node.var.value)
+    end
+    
+    def visit_for_each_iter(node)
+        # if @runtime.get(node.var.value) < node.endd.visit(self).value
+        if LessThan.new(@runtime.get(node.var.value), node.endd.visit(self))
+            node.block.visit(self)
+            new_value = node.visit(Add.new(@runtime.get(node.var.value), IntegerPrimitive.new(1)))
+            @runtime.set(node.var.visit(self).value, new_value)
+            visit_for_each_iter(node)
+        end
     end
 
     def visit_function(node)

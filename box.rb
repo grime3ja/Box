@@ -2,6 +2,24 @@ require_relative "parser"
 require_relative "lexer"
 require_relative "evaluator"
 
+# string = ["a = 0", "a = a + 1", "a = a + 1"]
+string = ["x = 0", "y = 6", "x + 2"]
+runtime = Runtime.new
+string.each do |expression|
+    puts expression
+    lex = Lexer.new(expression)
+    tokens = lex.lex_string
+    for token in tokens
+        p token
+    end
+    puts
+    parse = Parser.new(tokens)
+    parsed = parse.parse
+    pp parsed
+    puts
+    p parsed.visit(Evaluator.new(runtime))
+end
+
 # arithmetic_strings = ["5 + 2", "10 * 6 - 10 % 4", "~6", "2 ** 9", "45 & ---(1 + 3)", "9 << 1"]
 
 # #parse each string, then with the parsed version evaluate the result
@@ -52,13 +70,13 @@ require_relative "evaluator"
 
 # invalid tests
 # expression = "62=+color^!~"
-expression = "573489 | print"
+# expression = "573489 | print"
 # expression = "<< 2"
-puts expression
-lex = Lexer.new(expression)
-tokens = lex.lex_string
-for token in tokens
-    p token
-end
-var_parse = Parser.new(tokens)
-var_parsed = var_parse.parse
+# puts expression
+# lex = Lexer.new(expression)
+# tokens = lex.lex_string
+# for token in tokens
+#     p token
+# end
+# var_parse = Parser.new(tokens)
+# var_parsed = var_parse.parse

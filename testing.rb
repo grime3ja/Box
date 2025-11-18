@@ -13,17 +13,25 @@ if_statement = If.new(GreaterThan.new(IntegerPrimitive.new(5), IntegerPrimitive.
                         IntegerPrimitive.new(1),                                         #   1
                       BooleanPrimitive.new(true),                                        # else
                         IntegerPrimitive.new(0))                                         #   0
-p if_statement.visit(Evaluator.new(runtime))
-a_assign = Assignment.new(VarPrimitive.new("a"), IntegerPrimitive.new(0))
-var_ref_a = VarReference.new(a_assign)
-while_statement = While.new(LessThan.new(var_ref_a, IntegerPrimitive.new(6)), # while 5 > 6
-                        var_ref_a = VarReference.new(Assignment.new(var_ref_a,Add.new(var_ref_a, IntegerPrimitive.new(1)))))                                               #   1
-                                                                                               # end
-p while_statement.visit(Evaluator.new(runtime))
+if_statement.visit(Evaluator.new(runtime))
 
-for_statement = ForEach.new(VarReference.new(Assignment.new(VarPrimitive.new("i"), IntegerPrimitive.new(0))), IntegerPrimitive.new(0), IntegerPrimitive.new(5), # for i in [0, 5]
-                        IntegerPrimitive.new(1))                                                                                                                #   1
-p for_statement.visit(Translator.new)
+puts
+vp_a = VarPrimitive.new("a")
+a_assign = Assignment.new(vp_a, IntegerPrimitive.new(0))
+a_assign.visit(Evaluator.new(runtime))
+var_ref_a = VarReference.new("a")
+while_statement = While.new(LessThan.new(var_ref_a, IntegerPrimitive.new(6)),               # while a < 6
+                        Assignment.new(VarPrimitive.new("a"), Add.new(var_ref_a, IntegerPrimitive.new(1))))  #   a = a + 1
+                                                                                            # end
+while_statement.visit(Evaluator.new(runtime))
+
+x = Assignment.new(VarPrimitive.new("x"), IntegerPrimitive.new(0))
+y = Assignment.new(VarPrimitive.new("y"), IntegerPrimitive.new(5))
+x.visit(Evaluator.new(runtime))
+y.visit(Evaluator.new(runtime))
+for_statement = ForEach.new(VarPrimitive.new("i"), Add.new(VarReference.new("x"), IntegerPrimitive.new(2)), VarReference.new("y"), # for i in [x + 2, y]
+                        PrintOut.new(VarReference.new("i")))                                                                                                                #   1
+p for_statement.visit(Evaluator.new(runtime))
 
 function = Function.new(StringPrimitive.new("foo"), VarPrimitive.new("a"), # function foo(a)
                         Return.new(IntegerPrimitive.new(5)))                                                                                #   return 5
