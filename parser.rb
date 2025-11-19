@@ -40,12 +40,16 @@ class Parser
     block = []
     elsee = false
     else_block = []
-    if has (:if)
+    if has(:if)
       advance
       condition = parse_lvl8
-      until has(:else) || has(:end) do
-        advance
-        block << parse_lvl8
+      if has(:then)
+        loop do
+          advance
+          statement = parse_lvl8
+          block << statement
+          break if has(:end)
+        end
       end
       If.new(condition,block,elsee,else_block)
     else
@@ -53,7 +57,7 @@ class Parser
     end
   end
   def parse_lvl8
-    if has (:print)
+    if has(:print)
       advance
       expression = parse_lvl7
       return PrintOut.new(expression)
