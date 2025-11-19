@@ -4,7 +4,7 @@ require_relative "evaluator"
 
 # string = ["a = 0", "a = a + 1", "a = a + 1"]
 # string = ["x = 0", "y = 6", "x + 2"]
-string = ["i = 0", "if i < 5 then print i", "end"]
+string = ["i = 0", "if i < 5 then i = i + 1\nprint i end"]
 runtime = Runtime.new
 string.each do |expression|
     puts expression

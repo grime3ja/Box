@@ -168,6 +168,7 @@ class Lexer
             elsif @curr_token.eql?("if")
                 emit_token(:if)
             elsif @curr_token.eql?("then")
+                emit_token(:then)
             elsif @curr_token.eql?("else")
                 emit_token(:else)
             elsif @curr_token.eql?("while")
