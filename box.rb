@@ -5,7 +5,7 @@ require_relative "translator"
 
 # string = ["a = 0", "a = a + 1", "a = a + 1"]
 # string = ["x = 0", "y = 6", "x + 2"]
-string = ["for i in 1 5\nprint i end"]
+string = ["function double(x) return x + x"]
 runtime = Runtime.new
 string.each do |expression|
     puts expression

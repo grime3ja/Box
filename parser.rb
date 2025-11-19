@@ -34,8 +34,40 @@ class Parser
   end
 
   def parse
-    result = parse_lvl9
+    result = parse_lvl10
   end
+  def parse_lvl10
+    param = []
+    function_block = []
+    if has(:function)
+      advance
+      name = parse_lvl9
+      if has(:left_parenthesis)
+        loop do
+          advance
+          param_statement = parse_lvl9
+          param << param_statement
+          break if has(:right_parenthesis)
+        end
+      end
+      loop do
+        advance
+        if has(:return)
+            advance
+            return_statement = parse_lvl9
+            return_val = Return.new(return_statement)
+            function_block << return_val
+        else
+          function_statement = parse_lvl9
+          function_block << function_statement
+          break if has(:end)
+        end
+      end
+    Function.new(name, param, function_block)
+    end
+    parse_lvl9
+  end
+
   def parse_lvl9
     if_block = []
     elsee = false
