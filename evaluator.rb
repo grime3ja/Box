@@ -365,7 +365,6 @@ class Evaluator
     def visit_for_each(node)
         raise "Expected #{node.var} to be type VarPrimitive or VarReference" unless (node.var.is_a? VarPrimitive) || (node.var.is_a? VarReference)
         @runtime.set(node.var.value, node.start.visit(self))
-        # Assignment.new(node.var.visit(self), node.start.visit(self))
         (node.start.visit(self).value + 1..node.endd.visit(self).value).each do |i|
             node.block[..-1].each do |line|
                 line.visit(self)
@@ -376,10 +375,11 @@ class Evaluator
     end
 
     def visit_function(node)
-
+        @runtime.add_func(node.name.visit(self), node)
     end
 
     def visit_return(node)
+        raise node.val
     end
 
     def visit_function_call(node)
@@ -390,6 +390,7 @@ end
 class Runtime
     def initialize
         @vars = {}
+        @funcs = {}
     end
 
     def get(name)
@@ -398,5 +399,9 @@ class Runtime
 
     def set(name,value)
         @vars[name] = value
+    end
+
+    def add_func(name, node)
+        @funcs[name] = node
     end
 end

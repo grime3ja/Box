@@ -39,10 +39,13 @@ for_statement = ForEach.new(VarPrimitive.new("i"), Add.new(VarReference.new("x")
 puts for_statement.visit(Translator.new)
 p for_statement.visit(Evaluator.new(runtime))
 
-# function = Function.new(StringPrimitive.new("foo"), VarPrimitive.new("a"), # function foo(a)
-#                         Return.new(IntegerPrimitive.new(5)))                                                                                #   return 5
-#                                                                                                                      # end
-# p function.visit(Translator.new)
+runtime = Runtime.new
+function = Function.new(StringPrimitive.new("foo"), [VarPrimitive.new("a"), VarPrimitive.new("b")],                     # function foo(a, b)
+                        [Assignment.new(VarPrimitive.new("sum"), Add.new(VarReference.new("a"), VarReference.new("b"))),#   sum = a + b
+                         Return.new(VarReference.new("sum")),                                                           #   return sum
+                         StringPrimitive.new("end")])                                                                   # end
+puts function.visit(Translator.new)
+
 
 # function_call = PrintOut.new(FunctionCall.new(StringPrimitive.new("foo"), IntegerPrimitive.new(5)))
 # p function_call.visit(Translator.new)

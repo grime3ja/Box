@@ -148,7 +148,7 @@ class Translator
     end
 
     def visit_function(node)
-        "function #{node.name.visit(self)}(#{node.parameters.visit(self)})\n#{node.body.visit(self)}\nend"
+        "function #{node.name.visit(self)}(#{node.parameters.map {|parameter| parameter.visit(self)}.join(", ")})\n#{node.body.map {|statement| statement.visit(self)}.join("\n")}"
     end
 
     def visit_return(node)
