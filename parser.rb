@@ -37,17 +37,17 @@ class Parser
     result = parse_lvl9
   end
   def parse_lvl9
-    block = []
+    if_block = []
     elsee = false
     else_block = []
     if has(:if)
       advance
-      condition = parse_lvl8
+      if_condition = parse_lvl8
       if has(:then)
         loop do
           advance
-          statement = parse_lvl8
-          block << statement
+          if_statement = parse_lvl8
+          if_block << if_statement
           break if has(:end) || has(:else)
         end
       end
@@ -55,12 +55,41 @@ class Parser
         elsee = BooleanPrimitive.new(true)
         loop do
           advance
-          statement = parse_lvl8
-          else_block << statement
+          if_statement = parse_lvl8
+          else_block << if_statement
           break if has(:end)
         end
       end
-      If.new(condition,block,elsee,else_block)
+      If.new(if_condition,if_block,elsee,else_block)
+    elsif has(:while)
+      while_block = []
+      advance
+      while_condtion = parse_lvl8
+      loop do
+        advance
+        while_statement = parse_lvl8
+        while_block << while_statement
+        break if has(:end)
+      end
+      While.new(while_condtion, while_block)
+    elsif has(:for)
+      for_block = []
+      advance
+      var = parse_lvl8
+      advance
+      if has(:in)
+        advance
+        start = parse_lvl8
+        advance
+        endd = parse_lvl8
+        loop do
+          advance
+          for_statement = parse_lvl8
+          for_block << for_statement
+          break if has(:end)
+        end
+      end
+      ForEach.new(var,start,endd,for_block)
     else
       parse_lvl8
     end
