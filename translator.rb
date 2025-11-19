@@ -124,7 +124,11 @@ class Translator
     end
     
     def visit_rvalue(node)
-        "#{node.value.visit(self).split[0]}"
+        if node.is_a?(VarReference)
+            "#{node.value}"
+        else
+            "#{node.value.visit(self).split[0]}"
+        end
     end
 
     def visit_print(node)
@@ -132,15 +136,15 @@ class Translator
     end
 
     def visit_if(node)
-        "if #{node.condition.visit(self)}\n#{node.block.visit(self)}\n#{node.elsee ? "else\n#{node.else_block.visit(self)}\n" : ""}end"
+        "if #{node.condition.visit(self)}\n#{node.block.map {|statement| statement.visit(self)}.join("\n")}\n#{node.elsee ? "else\n#{node.else_block.map {|statement| statement.visit(self)}.join("\n")}" : ""}"
     end
 
     def visit_while(node)
-        "while #{node.condition.visit(self)}\n#{node.block.visit(self)}\nend"
+        "while #{node.condition.visit(self)}\n#{node.block.map {|statement| statement.visit(self)}.join("\n")}"
     end
 
     def visit_for_each(node)
-        "for #{node.var.visit(self)} in [#{node.start.visit(self)}, #{node.endd.visit(self)}]\n#{node.block.visit(self)}\nend"
+        "for #{node.var.visit(self)} in [#{node.start.visit(self)}, #{node.endd.visit(self)}]\n#{node.block.map {|statement| statement.visit(self)}.join("\n")}"
     end
 
     def visit_function(node)

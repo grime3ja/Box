@@ -3,7 +3,8 @@ require_relative "lexer"
 require_relative "evaluator"
 
 # string = ["a = 0", "a = a + 1", "a = a + 1"]
-string = ["x = 0", "y = 6", "x + 2"]
+# string = ["x = 0", "y = 6", "x + 2"]
+string = ["i = 0", "while i < 5", "print i", "i = i + 1", "end"]
 runtime = Runtime.new
 string.each do |expression|
     puts expression
@@ -13,11 +14,11 @@ string.each do |expression|
         p token
     end
     puts
-    parse = Parser.new(tokens)
-    parsed = parse.parse
-    pp parsed
-    puts
-    p parsed.visit(Evaluator.new(runtime))
+    # parse = Parser.new(tokens)
+    # parsed = parse.parse
+    # pp parsed
+    # puts
+    # p parsed.visit(Evaluator.new(runtime))
 end
 
 # arithmetic_strings = ["5 + 2", "10 * 6 - 10 % 4", "~6", "2 ** 9", "45 & ---(1 + 3)", "9 << 1"]

@@ -10,19 +10,23 @@ require_relative "relational"
 require_relative "control_flow"
 runtime = Runtime.new
 if_statement = If.new(GreaterThan.new(IntegerPrimitive.new(5), IntegerPrimitive.new(6)), # if 5 > 6
-                        IntegerPrimitive.new(1),                                         #   1
+                        [IntegerPrimitive.new(1)],                                       #   1
                       BooleanPrimitive.new(true),                                        # else
-                        IntegerPrimitive.new(0))                                         #   0
-if_statement.visit(Evaluator.new(runtime))
+                        [IntegerPrimitive.new(0),                                        #   0
+                         StringPrimitive.new("end")])                                    # end
+puts if_statement.visit(Translator.new)
+p if_statement.visit(Evaluator.new(runtime))
 
 puts
 vp_a = VarPrimitive.new("a")
 a_assign = Assignment.new(vp_a, IntegerPrimitive.new(0))
 a_assign.visit(Evaluator.new(runtime))
 var_ref_a = VarReference.new("a")
-while_statement = While.new(LessThan.new(var_ref_a, IntegerPrimitive.new(6)),               # while a < 6
-                        Assignment.new(VarPrimitive.new("a"), Add.new(var_ref_a, IntegerPrimitive.new(1))))  #   a = a + 1
-                                                                                            # end
+while_statement = While.new(LessThan.new(var_ref_a, IntegerPrimitive.new(6)),                               # while a < 6
+                        [Assignment.new(VarPrimitive.new("a"), Add.new(var_ref_a, IntegerPrimitive.new(1))),#   a = a + 1
+                         PrintOut.new(VarReference.new("a")),                                               #   print a
+                         StringPrimitive.new("end")])                                                       # end
+puts while_statement.visit(Translator.new)
 while_statement.visit(Evaluator.new(runtime))
 
 x = Assignment.new(VarPrimitive.new("x"), IntegerPrimitive.new(0))
@@ -30,16 +34,18 @@ y = Assignment.new(VarPrimitive.new("y"), IntegerPrimitive.new(5))
 x.visit(Evaluator.new(runtime))
 y.visit(Evaluator.new(runtime))
 for_statement = ForEach.new(VarPrimitive.new("i"), Add.new(VarReference.new("x"), IntegerPrimitive.new(2)), VarReference.new("y"), # for i in [x + 2, y]
-                        PrintOut.new(VarReference.new("i")))                                                                                                                #   1
+                        [PrintOut.new(VarReference.new("i")),                                                                      #   print i
+                         StringPrimitive.new("end")])                                                                              # end
+puts for_statement.visit(Translator.new)
 p for_statement.visit(Evaluator.new(runtime))
 
-function = Function.new(StringPrimitive.new("foo"), VarPrimitive.new("a"), # function foo(a)
-                        Return.new(IntegerPrimitive.new(5)))                                                                                #   return 5
-                                                                                                                     # end
-p function.visit(Translator.new)
+# function = Function.new(StringPrimitive.new("foo"), VarPrimitive.new("a"), # function foo(a)
+#                         Return.new(IntegerPrimitive.new(5)))                                                                                #   return 5
+#                                                                                                                      # end
+# p function.visit(Translator.new)
 
-function_call = PrintOut.new(FunctionCall.new(StringPrimitive.new("foo"), IntegerPrimitive.new(5)))
-p function_call.visit(Translator.new)
+# function_call = PrintOut.new(FunctionCall.new(StringPrimitive.new("foo"), IntegerPrimitive.new(5)))
+# p function_call.visit(Translator.new)
 
 ### Video Examples ###
 
