@@ -375,7 +375,7 @@ class Evaluator
     end
 
     def visit_function(node)
-        @runtime.add_func(node.name.visit(self), node)
+        @runtime.add_func(node.name.value, node)
     end
 
     def visit_return(node)

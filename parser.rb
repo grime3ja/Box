@@ -57,6 +57,7 @@ class Parser
             return_statement = parse_lvl9
             return_val = Return.new(return_statement)
             function_block << return_val
+            break if has(:end)
         else
           function_statement = parse_lvl9
           function_block << function_statement
@@ -64,8 +65,9 @@ class Parser
         end
       end
     Function.new(name, param, function_block)
-    end
+    else
     parse_lvl9
+    end
   end
 
   def parse_lvl9

@@ -5,7 +5,7 @@ require_relative "translator"
 
 # string = ["a = 0", "a = a + 1", "a = a + 1"]
 # string = ["x = 0", "y = 6", "x + 2"]
-string = ["function double(x) return x + x"]
+string = ["function double(x) return x + x end"]
 runtime = Runtime.new
 string.each do |expression|
     puts expression
@@ -19,8 +19,8 @@ string.each do |expression|
     parsed = parse.parse
     # pp parsed
     puts
-    p parsed.visit(Evaluator.new(runtime))
-    #puts parsed.visit(Translator.new)
+    #p parsed.visit(Evaluator.new(runtime))
+    puts parsed.visit(Translator.new)
 end
 
 # arithmetic_strings = ["5 + 2", "10 * 6 - 10 % 4", "~6", "2 ** 9", "45 & ---(1 + 3)", "9 << 1"]
