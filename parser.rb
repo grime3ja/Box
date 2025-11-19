@@ -76,11 +76,11 @@ class Parser
       for_block = []
       advance
       var = parse_lvl8
-      advance
+      # advance
       if has(:in)
         advance
         start = parse_lvl8
-        advance
+        # advance
         endd = parse_lvl8
         loop do
           advance

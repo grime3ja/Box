@@ -364,12 +364,13 @@ class Evaluator
 
     def visit_for_each(node)
         raise "Expected #{node.var} to be type VarPrimitive or VarReference" unless (node.var.is_a? VarPrimitive) || (node.var.is_a? VarReference)
-        @runtime.set(node.var.visit(self).value, node.start.visit(self))
+        @runtime.set(node.var.value, node.start.visit(self))
+        # Assignment.new(node.var.visit(self), node.start.visit(self))
         (node.start.visit(self).value + 1..node.endd.visit(self).value).each do |i|
             node.block[..-1].each do |line|
                 line.visit(self)
             end
-            @runtime.set(node.var.visit(self).value, IntegerPrimitive.new(i))
+            @runtime.set(node.var.value, IntegerPrimitive.new(i))
         end
         @runtime.get(node.var.value)
     end

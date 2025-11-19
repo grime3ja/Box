@@ -17,7 +17,7 @@ string.each do |expression|
     puts
     parse = Parser.new(tokens)
     parsed = parse.parse
-    pp parsed
+    # pp parsed
     puts
     p parsed.visit(Evaluator.new(runtime))
     #puts parsed.visit(Translator.new)
