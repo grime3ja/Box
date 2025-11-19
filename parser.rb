@@ -6,6 +6,7 @@ require_relative 'cast'
 require_relative 'logical'
 require_relative 'primitive'
 require_relative 'variable'
+require_relative 'control_flow'
 class Parser
   def initialize(tokens)
     @tokens = tokens
@@ -33,7 +34,23 @@ class Parser
   end
 
   def parse
-    result = parse_lvl8
+    result = parse_lvl9
+  end
+  def parse_lvl9
+    block = []
+    elsee = false
+    else_block = []
+    if has (:if)
+      advance
+      condition = parse_lvl8
+      until has(:else) || has(:end) do
+        advance
+        block << parse_lvl8
+      end
+      If.new(condition,block,elsee,else_block)
+    else
+      parse_lvl8
+    end
   end
   def parse_lvl8
     if has (:print)
