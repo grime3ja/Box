@@ -1,10 +1,11 @@
 require_relative "parser"
 require_relative "lexer"
 require_relative "evaluator"
+require_relative "translator"
 
 # string = ["a = 0", "a = a + 1", "a = a + 1"]
 # string = ["x = 0", "y = 6", "x + 2"]
-string = ["i = 0", "if i < 5 then i = i + 1\nprint i end"]
+string = ["i = 0", "if i > 5 then i = i + 1\nprint i else print i + 2 end"]
 runtime = Runtime.new
 string.each do |expression|
     puts expression
@@ -19,6 +20,7 @@ string.each do |expression|
     pp parsed
     puts
     p parsed.visit(Evaluator.new(runtime))
+    #puts parsed.visit(Translator.new)
 end
 
 # arithmetic_strings = ["5 + 2", "10 * 6 - 10 % 4", "~6", "2 ** 9", "45 & ---(1 + 3)", "9 << 1"]

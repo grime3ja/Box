@@ -48,6 +48,15 @@ class Parser
           advance
           statement = parse_lvl8
           block << statement
+          break if has(:end) || has(:else)
+        end
+      end
+      if has(:else)
+        elsee = BooleanPrimitive.new(true)
+        loop do
+          advance
+          statement = parse_lvl8
+          else_block << statement
           break if has(:end)
         end
       end
