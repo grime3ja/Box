@@ -45,6 +45,9 @@ class Parser
       if has(:left_parenthesis)
         loop do
           advance
+          if has(:comma)
+            advance
+          end
           param_statement = parse_lvl9
           param << param_statement
           break if has(:right_parenthesis)

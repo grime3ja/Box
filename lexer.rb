@@ -179,6 +179,8 @@ class Lexer
                 emit_token(:in)
             elsif @curr_token.eql?("function")
                 emit_token(:function)
+            elsif @curr_token.eql?(",")
+                emit_token(:comma)
             elsif @curr_token.eql?("end")
                 emit_token(:end)
             elsif @curr_token.eql?("return")
