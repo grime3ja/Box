@@ -45,10 +45,12 @@ function = Function.new(StringPrimitive.new("foo"), [VarPrimitive.new("a"), VarP
                          Return.new(VarReference.new("sum")),                                                           #   return sum
                          StringPrimitive.new("end")])                                                                   # end
 puts function.visit(Translator.new)
+function.visit(Evaluator.new(runtime))
 
 
-# function_call = PrintOut.new(FunctionCall.new(StringPrimitive.new("foo"), IntegerPrimitive.new(5)))
-# p function_call.visit(Translator.new)
+function_call = PrintOut.new(FunctionCall.new(StringPrimitive.new("foo"), [IntegerPrimitive.new(5), IntegerPrimitive.new(6)]))
+puts function_call.visit(Translator.new)
+function_call.visit(Evaluator.new(runtime))
 
 ### Video Examples ###
 

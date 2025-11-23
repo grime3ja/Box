@@ -379,10 +379,32 @@ class Evaluator
     end
 
     def visit_return(node)
-        raise node.val
+        raise NameError.new("#{@runtime.get(node.val.value).inspect}")
     end
 
     def visit_function_call(node)
+        raise "Function call to \"#{node.name.value}\" yielded no results" if !@runtime.has_func(node.name.value)
+        function = @runtime.get_func(node.name.value)
+        function_runtime = Runtime.new
+        i = 0
+        function.parameters.each do |var|
+            function_runtime.set(var.value, node.parameters[i])
+            i += 1
+        end
+        temp_runtime = @runtime
+        @runtime = function_runtime
+        p @runtime
+
+        returned = NullPrimitive.new
+        function.body.each do |line|
+            begin
+                line.visit(self)
+            rescue => e
+                @runtime = temp_runtime
+                returned = e.message
+            end
+        end
+        returned
     end
 end
 
@@ -403,5 +425,13 @@ class Runtime
 
     def add_func(name, node)
         @funcs[name] = node
+    end
+
+    def get_func(name)
+        @funcs[name]
+    end
+
+    def has_func(name)
+        @funcs.has_key?(name)
     end
 end
