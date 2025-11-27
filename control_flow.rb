@@ -65,7 +65,7 @@ end
 class FunctionCall
   attr_reader :name, :parameters
   def initialize(name, parameters)
-    @name = name
+    @name = name.is_a?(VarPrimitive) ? name : VarPrimitive.new(name)
     @parameters = parameters
   end
 

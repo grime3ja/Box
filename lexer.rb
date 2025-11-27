@@ -153,6 +153,9 @@ class Lexer
             end
             capture
             emit_token(:quote_string)
+        elsif has(",")
+            capture
+            emit_token(:comma)
         elsif has_letter
             while has_letter or has("_")
                 capture

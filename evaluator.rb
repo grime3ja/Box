@@ -376,11 +376,12 @@ class Evaluator
 
     def visit_function(node)
         @runtime.add_func(node.name.value, node)
+        node
     end
 
-    def visit_return(node)
-        raise NameError.new("#{@runtime.get(node.val.value).inspect}")
-    end
+    # def visit_return(node)
+    #     raise NameError.new("#{@runtime.get(node.val.value).inspect}")
+    # end
 
     def visit_function_call(node)
         raise "Function call to \"#{node.name.value}\" yielded no results" if !@runtime.has_func(node.name.value)
@@ -388,7 +389,7 @@ class Evaluator
         function_runtime = Runtime.new
         i = 0
         function.parameters.each do |var|
-            function_runtime.set(var.value, node.parameters[i])
+            function_runtime.set(var.value, node.parameters[i].visit(self))
             i += 1
         end
         temp_runtime = @runtime
@@ -399,17 +400,30 @@ class Evaluator
         function.body.each do |line|
             begin
                 line.visit(self)
-            rescue => e
+            rescue ReturnException => e
                 @runtime = temp_runtime
-                returned = e.message
+                returned = e.value
             end
         end
         returned
     end
+    class ReturnException < StandardError
+        attr_reader :value
+
+        def initialize(value)
+            @value = value
+        end
+    end
+    def visit_return(node)
+        value = node.val.visit(self)
+        raise ReturnException.new(value)
+    end
+
 end
 
 
 class Runtime
+    attr_reader :vars, :funcs
     def initialize
         @vars = {}
         @funcs = {}

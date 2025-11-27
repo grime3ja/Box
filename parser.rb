@@ -41,7 +41,13 @@ class Parser
     function_block = []
     if has(:function)
       advance
-      name = parse_lvl9
+      if has(:string) || has(:variable)
+        token = curr_token
+        name = VarPrimitive.new(token.text)
+        advance
+      else
+        raise "Invalid function"
+      end
       if has(:left_parenthesis)
         loop do
           advance
@@ -337,9 +343,23 @@ class Parser
       return StringPrimitive.new(token.text)
     elsif has(:string) || has(:variable)
       token = curr_token
+      name = token.text
       advance
       if (has(:assignment_equal))
         return VarPrimitive.new(token.text)
+      end
+      if has(:left_parenthesis)
+        advance
+        arguments = []
+        unless has(:right_parenthesis)
+          loop do
+            arguments << parse_lvl9
+            break unless has(:comma)
+            advance
+          end
+        end
+        expect(:right_parenthesis)
+        return FunctionCall.new(name, arguments)
       end
       return VarReference.new(token.text)
     else
