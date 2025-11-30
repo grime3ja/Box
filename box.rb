@@ -7,8 +7,9 @@ require_relative "translator"
 #   "function double(x, y) return x + y end",
 #   "double(3, 4)"
 # ]
-lines = ["if((2 % 2) == 0) then true else false end", ""]
+#lines = ["if((2 % 2) == 0) then true else false end", ""]
 
+lines = ["a = 0", "while a < 6", "a = a + 1", "print a", "end"]
 runtime = Runtime.new
 # evaluator = Evaluator.new(runtime)
 

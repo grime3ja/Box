@@ -9,15 +9,14 @@ require_relative "variable"
 require_relative "relational"
 require_relative "control_flow"
 runtime = Runtime.new
-if_statement = If.new(GreaterThan.new(IntegerPrimitive.new(5), IntegerPrimitive.new(6)), # if 5 > 6
-                        [IntegerPrimitive.new(1)],                                       #   1
-                      BooleanPrimitive.new(true),                                        # else
-                        [IntegerPrimitive.new(0),                                        #   0
-                         StringPrimitive.new("end")])                                    # end
-puts if_statement.visit(Translator.new)
-p if_statement.visit(Evaluator.new(runtime))
+# if_statement = If.new(GreaterThan.new(IntegerPrimitive.new(5), IntegerPrimitive.new(6)), # if 5 > 6
+#                         [IntegerPrimitive.new(1)],                                       #   1
+#                       BooleanPrimitive.new(true),                                        # else
+#                         [IntegerPrimitive.new(0),                                        #   0
+#                          StringPrimitive.new("end")])                                    # end
+# puts if_statement.visit(Translator.new)
+# p if_statement.visit(Evaluator.new(runtime))
 
-puts
 vp_a = VarPrimitive.new("a")
 a_assign = Assignment.new(vp_a, IntegerPrimitive.new(0))
 a_assign.visit(Evaluator.new(runtime))
@@ -39,18 +38,18 @@ for_statement = ForEach.new(VarPrimitive.new("i"), Add.new(VarReference.new("x")
 puts for_statement.visit(Translator.new)
 p for_statement.visit(Evaluator.new(runtime))
 
-runtime = Runtime.new
-function = Function.new(StringPrimitive.new("foo"), [VarPrimitive.new("a"), VarPrimitive.new("b")],                     # function foo(a, b)
-                        [Assignment.new(VarPrimitive.new("sum"), Add.new(VarReference.new("a"), VarReference.new("b"))),#   sum = a + b
-                         Return.new(VarReference.new("sum")),                                                           #   return sum
-                         StringPrimitive.new("end")])                                                                   # end
-puts function.visit(Translator.new)
-function.visit(Evaluator.new(runtime))
+# runtime = Runtime.new
+# function = Function.new(StringPrimitive.new("foo"), [VarPrimitive.new("a"), VarPrimitive.new("b")],                     # function foo(a, b)
+#                         [Assignment.new(VarPrimitive.new("sum"), Add.new(VarReference.new("a"), VarReference.new("b"))),#   sum = a + b
+#                          Return.new(VarReference.new("sum")),                                                           #   return sum
+#                          StringPrimitive.new("end")])                                                                   # end
+# puts function.visit(Translator.new)
+# function.visit(Evaluator.new(runtime))
 
 
-function_call = PrintOut.new(FunctionCall.new(StringPrimitive.new("foo"), [IntegerPrimitive.new(5), IntegerPrimitive.new(6)]))
-puts function_call.visit(Translator.new)
-function_call.visit(Evaluator.new(runtime))
+# function_call = PrintOut.new(FunctionCall.new(StringPrimitive.new("foo"), [IntegerPrimitive.new(5), IntegerPrimitive.new(6)]))
+# puts function_call.visit(Translator.new)
+# function_call.visit(Evaluator.new(runtime))
 
 ### Video Examples ###
 
