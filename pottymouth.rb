@@ -152,11 +152,12 @@ def param_eval(inputs, lex_string, table, act_expr, exp_expr, output, y, exp_typ
         end
         # lex the expected tokens
         exp_parse = nil
+        exp_eval = nil
         exp_expr.each do |expression|
           lex = Lexer.new(expression)
           tokens = lex.lex_string
           exp_parse = Parser.new(tokens).parse
-          exp_parse.visit(Evaluator.new(expected_runtime))
+          exp_eval = exp_parse.visit(Evaluator.new(expected_runtime))
         end
         # lex the actual tokens
         act_parse = nil
@@ -170,7 +171,6 @@ def param_eval(inputs, lex_string, table, act_expr, exp_expr, output, y, exp_typ
           act_parse.visit(Evaluator.new(actual_runtime))
         end
         table.setpos(y,60)
-        exp_eval = exp_parse.visit(Evaluator.new(expected_runtime))
         exp_translate = exp_eval.visit(Translator.new).to_s
         actual_eval = act_parse.visit(Evaluator.new(actual_runtime))
         actual_translate = actual_eval.visit(Translator.new).to_s
@@ -185,7 +185,7 @@ def param_eval(inputs, lex_string, table, act_expr, exp_expr, output, y, exp_typ
         else
           output.clear
           output.setpos(2, 3)
-          output.addstr("#{act_expr} is not the correct function.")
+          output.addstr("#{act_expr[0]} is not the correct function.")
           output.refresh
         end
         table.refresh
@@ -262,15 +262,16 @@ loop do
     display.clear
     display.addstr(display_help_messages(mode))
     display.refresh
+    y = 3
+    x = 2
     # get the user input function
     loop do
-      y = 2
       chr = function.getch
-      # ctrl-c for windows, command for mac
-      if chr == 3 || chr == 91
+      # ctrl-c for windows, ctrl-d for mac to submit function
+      if chr == 3 || chr == 4
         full_function = full_function.strip
-        function.setpos(y, 2)
-        function.addstr("Guess has been entered: #{full_function}")
+        function.setpos(y + 1, 2)
+        function.addstr("Guess has been entered.")
         function.refresh 
         mode = Modes::INPUT
         display.clear
@@ -278,16 +279,28 @@ loop do
         display.refresh
         act_array << act_expr
         break
+      #backspace handling
       elsif chr == 8 || chr == 127
+        if x > 2
+          x -= 1
+        else
+          if y > 3
+            y -= 1
+            x = full_function.split("\n")[-1].length + 2
+          end
+        end
         function.clear
         function.setpos(1, (Curses.cols) / 30)
         function.addstr("Enter your function guess here")
         function.box('|', '-')
         full_function.chop!
         act_expr.chop!
-        y = 2
-        function.setpos(y, 2)
-        function.addstr(full_function)
+        exprs = full_function.split("\n")
+        exprs.each_with_index do |expr, index|
+          function.setpos(3 + index, 2)
+          function.addstr(expr)
+        end
+        function.setpos(y, x)
         function.refresh
       else
         full_function << chr
@@ -301,11 +314,13 @@ loop do
             act_expr = ""
           end
           y += 1
+          x = 1
           function.setpos(y, 2)
         else
-          function.setpos(y, 2)
-          function.addstr(full_function)
+          function.setpos(y, x)
+          function.addch(chr)
         end
+        x += 1
         function.refresh
       end
     end
