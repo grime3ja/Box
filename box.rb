@@ -3,22 +3,22 @@ require_relative "lexer"
 require_relative "evaluator"
 require_relative "translator"
 
-lines = [
-  "function double(x, y) return x + y end",
-  "double(3, 4)"
-]
+# lines = [
+#   "function double(x, y) return x + y end",
+#   "double(3, 4)"
+# ]
+lines = ["function double(x, y) return x + y end", "double(3, 4)"]
 
 runtime = Runtime.new
-evaluator = Evaluator.new(runtime)
+# evaluator = Evaluator.new(runtime)
 
 lines.each do |expression|
- 
   lex = Lexer.new(expression)
   tokens = lex.lex_string
   parsed = Parser.new(tokens).parse
-  p parsed
-  p parsed.visit(evaluator)
-  puts parsed.visit(Translator.new)
+  # p parsed
+  p parsed.visit(Evaluator.new(runtime))
+  # puts parsed.visit(Translator.new)
 end
 # string = ["a = 0", "a = a + 1", "a = a + 1"]
 # string = ["x = 0", "y = 6", "x + 2"]

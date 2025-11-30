@@ -17,7 +17,7 @@ end
 def display_help_messages(mode)
   case mode
     when Modes::FUNCTION
-      "<FUNCTION>:\n1. Write your guess for what the mystery function is (hint make sure you use a, b, and c for parameters)\n2. Press enter to enter <INPUT> mode"
+      "<FUNCTION>:\n1. Write your guess for what the mystery function is (hint make sure you use a, b, and c for parameters)\n2. Press CTRL-C/Command to enter <INPUT> mode"
     when Modes::INPUT
       "<INPUT>:\n1. Write your parameter list\n2. Press enter to run your function against our mystery function"
     when Modes::WAITING
@@ -36,9 +36,9 @@ height = Curses.lines
 w = width / 2.75
 
 # user input function window
-function = Window.new(height / 8, width / 4, 0, w)
+function = Window.new(height / 1.25, width / 4.5, 0, 1)
 i = 1
-function.setpos(i, width / 20)
+function.setpos(i, width / 30)
 lines = File.readlines(ARGV[0]).map(&:chomp)
 exp_type = lines[0]
 exp_expr = lines[1]
@@ -164,7 +164,7 @@ def param_eval(inputs, lex_string, table, act_expr, exp_expr, output, y, exp_typ
         table.addstr(exp_translate)
         table.setpos(y, 40)
         table.addstr(actual_translate)
-        if actual_translate == exp_translate
+        if actual_eval == exp_eval
           output.clear
           output.setpos(2, 3)
           output.addstr("Your function is correct!")
@@ -235,9 +235,11 @@ loop do
     break
   # function mode
   elsif c == 'f'
+    control = false
     act_expr = ""
+    act_array = []
     function.clear
-    function.setpos(1, (Curses.cols) / 20)
+    function.setpos(1, width / 30)
     function.addstr("Enter your function guess here")
     function.box('|', '-')
     function.refresh
@@ -247,34 +249,53 @@ loop do
     display.refresh
     # get the user input function
     loop do
+      y = 2
       chr = function.getch
-      if chr == 10
+      # ctrl-c for windows, command for mac
+      if chr == 3 || chr == 91
         act_expr = act_expr.strip
-        function.setpos(3, 2)
+        function.setpos(y, 2)
         function.addstr("Guess has been entered: #{act_expr}")
         function.refresh 
         mode = Modes::INPUT
         display.clear
-        display.addstr(display_help_messages(mode))
+        # display.addstr(display_help_messages(mode))
+        display.addstr(act_array.to_s)
         display.refresh
+
+        if act_array.eql?([])
+          act_array << act_expr
+        end
         break
       elsif chr == 8 || chr == 127
         function.clear
-        function.setpos(1, (Curses.cols) / 20)
+        function.setpos(1, (Curses.cols) / 30)
         function.addstr("Enter your function guess here")
         function.box('|', '-')
         act_expr.chop!
-        function.setpos(2, 2)
+        y = 2
+        function.setpos(y, 2)
         function.addstr(act_expr)
         function.refresh
       else
         act_expr << chr
-        function.setpos(2, 2)
-        function.addstr(act_expr)
+        if chr == 10
+          if act_expr.include?("function") || act_expr.include?("if") || act_expr.include?("while") || act_expr.include?("for")
+            control = true
+          end
+          if act_expr.include?("end") && control
+            act_array << act_expr.gsub(/[\r\n]+/, ' ')
+          end
+          y += 1
+          function.setpos(y, 2)
+        else
+          function.setpos(y, 2)
+          function.addstr(act_expr)
+        end
         function.refresh
       end
     end
-    y_position = param_eval(inputs, lex_string, table, act_expr,exp_expr,output, y_position, exp_type)
+    y_position = param_eval(inputs, lex_string, table, act_expr, exp_expr, output, y_position, exp_type)
     mode = Modes::WAITING
   # input parameter mode
   elsif c == 'i'
@@ -282,7 +303,7 @@ loop do
     display.clear
     display.addstr(display_help_messages(mode))
     display.refresh
-    y_position = param_eval(inputs, lex_string, table, act_expr,exp_expr,output, y_position, exp_type)
+    y_position = param_eval(inputs, lex_string, table, act_expr, exp_expr, output, y_position, exp_type)
     mode = Modes::WAITING
   # invalid mode
   else
