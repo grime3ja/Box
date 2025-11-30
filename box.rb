@@ -7,7 +7,7 @@ require_relative "translator"
 #   "function double(x, y) return x + y end",
 #   "double(3, 4)"
 # ]
-lines = ["function double(x, y) return x + y end", "double(3, 4)"]
+lines = ["if((2 % 2) == 0) then true else false end", ""]
 
 runtime = Runtime.new
 # evaluator = Evaluator.new(runtime)
@@ -16,9 +16,7 @@ lines.each do |expression|
   lex = Lexer.new(expression)
   tokens = lex.lex_string
   parsed = Parser.new(tokens).parse
-  # p parsed
   p parsed.visit(Evaluator.new(runtime))
-  # puts parsed.visit(Translator.new)
 end
 # string = ["a = 0", "a = a + 1", "a = a + 1"]
 # string = ["x = 0", "y = 6", "x + 2"]

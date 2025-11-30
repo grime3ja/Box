@@ -62,11 +62,11 @@ class Parser
       loop do
         advance
         if has(:return)
-            advance
-            return_statement = parse_lvl9
-            return_val = Return.new(return_statement)
-            function_block << return_val
-            break if has(:end)
+          advance
+          return_statement = parse_lvl9
+          return_val = Return.new(return_statement)
+          function_block << return_val
+          break if has(:end)
         else
           function_statement = parse_lvl9
           function_block << function_statement
@@ -89,6 +89,13 @@ class Parser
       if has(:then)
         loop do
           advance
+          if has(:return)
+            advance
+            return_statement = parse_lvl9
+            return_val = Return.new(return_statement)
+            if_block << return_val
+            break
+          end
           if_statement = parse_lvl8
           if_block << if_statement
           break if has(:end) || has(:else)
@@ -98,6 +105,13 @@ class Parser
         elsee = BooleanPrimitive.new(true)
         loop do
           advance
+          if has(:return)
+            advance
+            return_statement = parse_lvl9
+            return_val = Return.new(return_statement)
+            else_block << return_val
+            break
+          end
           if_statement = parse_lvl8
           else_block << if_statement
           break if has(:end)

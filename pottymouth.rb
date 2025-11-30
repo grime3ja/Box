@@ -41,7 +41,7 @@ i = 1
 function.setpos(i, width / 30)
 lines = File.readlines(ARGV[0]).map(&:chomp)
 exp_type = lines[0]
-exp_expr = lines[1]
+exp_expr = lines[1..]
 
 function.addstr("Enter your function guess here")
 function.box('|', '-')
@@ -150,12 +150,25 @@ def param_eval(inputs, lex_string, table, act_expr, exp_expr, output, y, exp_typ
           table.addstr(var_tokens[-1].text)
           current += 1
         end
-        exp_lex = Lexer.new(exp_expr)
-        exp_tokens = exp_lex.lex_string
-        exp_parse = Parser.new(exp_tokens).parse
-        act_lex = Lexer.new(act_expr)
-        act_tokens = act_lex.lex_string
-        act_parse = Parser.new(act_tokens).parse
+        # lex the expected tokens
+        exp_parse = nil
+        exp_expr.each do |expression|
+          lex = Lexer.new(expression)
+          tokens = lex.lex_string
+          exp_parse = Parser.new(tokens).parse
+          exp_parse.visit(Evaluator.new(expected_runtime))
+        end
+        # lex the actual tokens
+        act_parse = nil
+        act_expr.each do |expression|
+          if expression.eql?("")
+            break
+          end
+          lex = Lexer.new(expression)
+          tokens = lex.lex_string
+          act_parse = Parser.new(tokens).parse
+          act_parse.visit(Evaluator.new(actual_runtime))
+        end
         table.setpos(y,60)
         exp_eval = exp_parse.visit(Evaluator.new(expected_runtime))
         exp_translate = exp_eval.visit(Translator.new).to_s
@@ -164,7 +177,7 @@ def param_eval(inputs, lex_string, table, act_expr, exp_expr, output, y, exp_typ
         table.addstr(exp_translate)
         table.setpos(y, 40)
         table.addstr(actual_translate)
-        if actual_eval == exp_eval
+        if actual_translate.eql?(exp_translate)
           output.clear
           output.setpos(2, 3)
           output.addstr("Your function is correct!")
@@ -216,6 +229,7 @@ def param_eval(inputs, lex_string, table, act_expr, exp_expr, output, y, exp_typ
 end
 mode = Modes::WAITING
 act_expr = ""
+act_array = []
 loop do
   output.setpos(1, (Curses.cols) / 4.25)
   output.addstr("Output")
@@ -235,6 +249,7 @@ loop do
     break
   # function mode
   elsif c == 'f'
+    full_function = ""
     control = false
     act_expr = ""
     act_array = []
@@ -253,31 +268,29 @@ loop do
       chr = function.getch
       # ctrl-c for windows, command for mac
       if chr == 3 || chr == 91
-        act_expr = act_expr.strip
+        full_function = full_function.strip
         function.setpos(y, 2)
-        function.addstr("Guess has been entered: #{act_expr}")
+        function.addstr("Guess has been entered: #{full_function}")
         function.refresh 
         mode = Modes::INPUT
         display.clear
-        # display.addstr(display_help_messages(mode))
-        display.addstr(act_array.to_s)
+        display.addstr(display_help_messages(mode))
         display.refresh
-
-        if act_array.eql?([])
-          act_array << act_expr
-        end
+        act_array << act_expr
         break
       elsif chr == 8 || chr == 127
         function.clear
         function.setpos(1, (Curses.cols) / 30)
         function.addstr("Enter your function guess here")
         function.box('|', '-')
+        full_function.chop!
         act_expr.chop!
         y = 2
         function.setpos(y, 2)
-        function.addstr(act_expr)
+        function.addstr(full_function)
         function.refresh
       else
+        full_function << chr
         act_expr << chr
         if chr == 10
           if act_expr.include?("function") || act_expr.include?("if") || act_expr.include?("while") || act_expr.include?("for")
@@ -285,17 +298,18 @@ loop do
           end
           if act_expr.include?("end") && control
             act_array << act_expr.gsub(/[\r\n]+/, ' ')
+            act_expr = ""
           end
           y += 1
           function.setpos(y, 2)
         else
           function.setpos(y, 2)
-          function.addstr(act_expr)
+          function.addstr(full_function)
         end
         function.refresh
       end
     end
-    y_position = param_eval(inputs, lex_string, table, act_expr, exp_expr, output, y_position, exp_type)
+    y_position = param_eval(inputs, lex_string, table, act_array, exp_expr, output, y_position, exp_type)
     mode = Modes::WAITING
   # input parameter mode
   elsif c == 'i'
@@ -303,7 +317,7 @@ loop do
     display.clear
     display.addstr(display_help_messages(mode))
     display.refresh
-    y_position = param_eval(inputs, lex_string, table, act_expr, exp_expr, output, y_position, exp_type)
+    y_position = param_eval(inputs, lex_string, table, act_array, exp_expr, output, y_position, exp_type)
     mode = Modes::WAITING
   # invalid mode
   else
